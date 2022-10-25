@@ -1,0 +1,194 @@
+---
+title: "EDA - Resell car prices"
+author: "Yashwant Bhaidkar"
+date: "today"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+
+```{r , results=T}
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3)
+```
+
+
+
+```{r results=T}
+#Loading libraries
+library(ezids)
+library(ggplot2)
+```
+
+
+```{r results=T}
+car_data = data.frame(read.csv('cars.csv'))
+str(car_data)
+```
+
+## Data cleaning
+
+```{r results=T}
+car_data$transmission = as.factor(car_data$transmission)
+car_data$engine_fuel = as.factor(car_data$engine_fuel)
+car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
+car_data$engine_type = as.factor(car_data$engine_type)
+car_data$body_type = as.factor(car_data$body_type)
+car_data$has_warranty = as.factor(car_data$has_warranty)
+car_data$state = as.factor(car_data$state)
+car_data$drivetrain = as.factor(car_data$drivetrain)
+car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
+car_data$location_region = as.factor(car_data$location_region)
+```
+
+Updating the feature as factor to make them categorical
+
+
+```{r results=T}
+#car_data$year_produced <- strptime(car_data$year_produced, "%Y")
+```
+
+
+
+```{r results=T}
+feature_cols <- c(20:29)
+car_data[feature_cols] <- lapply(car_data[feature_cols],factor)
+str(car_data)
+```
+
+Updating the unknown features as factor in bulk
+
+```{r results=T}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+Getting some null values in engine capacity
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- mean(car_data$engine_capacity,na.rm = TRUE)
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+Replaced 10 missing values for engline capacity with mean of rest of the values
+
+```{r results=T}
+# car_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+# odometer_value_na = sum(is.na(car_data$odometer_value))
+# print(odometer_value_na)
+```
+
+There might be the possibility that vehicle is used for longer time
+
+## Exploratory data analysis
+
+```{r results=T}
+p <- ggplot(car_data, aes(x = price_usd)) +
+     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5)
+p
+```
+
+## Price destribution
+
+Transmission feature
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=transmission, y=price_usd)) + 
+  geom_boxplot(color="black", fill="orange")+
+  labs(x="car_transmission",y="price_usd") + labs(title="boxplot - Car Price distribution based on transmission type") 
+plot1
+```
+
+
+## odometer_value
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(mapping = aes(x = odometer_value, y = price_usd)) +
+    scale_x_continuous(name="odometer_value", labels = scales::comma) +
+        labs(x = 'odometer_value', y = 'price(in USD)') + labs(title = 'line plot - prices vs odometer values')
+```
+
+
+We can clearly see that as odometer value is increasing, car prices are going down.
+
+```{r results=T}
+plot3 <- ggplot(car_data,aes(x = odometer_value,y = '',color = odometer_value)) +
+        geom_violin(color="black", fill="pink") + geom_boxplot(width = .2,color="black", fill="violet") +
+        labs(x = 'odometer_value') + labs(title = 'Violin plot + box plot for odameter values')
+plot3
+```
+
+
+violin plot, checking odometer distribution and box plot in the same graph. 
+
+## year_produced
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd)) + labs(x = 'Year of production', y = 'Price(in USD)') + 
+    labs(title ='Year wise car price values')
+```
+
+
+As we can see that car prices of vintage cars is high. Also the resell price is high for latest cars.
+
+```{r results=T}
+plot_transmission <- ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd,linetype = transmission)) + 
+    labs(title = 'Year wise car price values based on transmission type') + labs(x = 'Year of production', y = 'Price(in USD)')
+plot_transmission
+```
+
+To check the Vintage category, mechanical are categorize as vintage and automatic cars are available from 1978. We are getting the similar results compared to the previous plot based on complete data.
+
+## Engine fuel
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=engine_fuel, y=price_usd)) + 
+  geom_boxplot(color="black", fill="green")+
+  labs(x="engine_fuel",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on engine_fuel") 
+plot1
+```
+
+
+## car prices based on engine cost
+
+```{r results=T}
+library(ggpubr)
+xplot <- ggdensity(car_data, "price_usd", fill = "engine_type",
+                   palette = "arc") + labs(title = 'density plot for car price based on engine type category') + labs(x = 'price(in USD)')
+xplot
+```
+
+We can clearly separate out electric engine category from diesel and gasoline. most of the distribution is overlapped for diesel and gasoline and we can see the Pareto distribution in both the categories.
+## engine capacity
+
+```{r results=T}
+ggplot(data = car_data, aes(x = engine_capacity, y = price_usd)) +
+    geom_smooth(color = 'yellow') +
+    labs(title = 'Car price values based on Engine Capacity') + labs(x = 'Engine capacity', y = 'price(in USD)')
+```
+
+
+As engine capacity is going high, the prices are also increasing.
+
+## has warranty feature
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=has_warranty, y=price_usd)) + 
+  geom_boxplot(color="black", fill="violet")+
+  labs(x="has_warranty",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on car is in warranty or not") 
+plot_warranty
+```
+
+As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
+Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
+
+
+
