@@ -190,5 +190,11 @@ plot_warranty
 As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
 Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
 
-
+## body type feature
+```{r results=T}
+plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#F48FB1")+
+  labs(x="body type",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on body type") 
+plot_body
+```
 
