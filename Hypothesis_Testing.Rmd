@@ -255,3 +255,51 @@ chitest = chisq.test(conTable)
 chitest
 ```
 
+```{r cars, include=FALSE}
+
+df = read.csv("cars.csv", header = T, stringsAsFactors = TRUE)
+
+df = subset(df, select=c("manufacturer_name", "model_name", "transmission", "color", "odometer_value", "year_produced", "engine_fuel", "engine_has_gas", "engine_type", "engine_capacity", "body_type", "has_warranty",
+"state", "drivetrain", "price_usd", "is_exchangeable", "number_of_photos",  "up_counter"))
+```
+
+```{r include=FALSE}
+library(corrplot)
+library(tidyverse)
+
+df %>% select_if(is.numeric)->cars_numerical
+```
+
+```{r cor}
+corrplot(cor(cars_numerical), method = 'number')
+```
+
+Anova test for color body type 
+```{r}
+df_aov_1 = aov(price_usd ~  color , df)
+summary(df_aov_1)
+```
+
+```{r}
+df_aov_4 = aov(price_usd ~  body_type , df)
+summary(df_aov_4)
+```
+```{r}
+df_aov_2 = aov(price_usd~  engine_fuel , df)
+summary(df_aov_2)
+```
+
+```{r}
+df_aov_3 = aov(price_usd~  engine_type , df)
+summary(df_aov_3)
+```
+
+t-test for transmission type
+
+```{r T test, echo=TRUE}
+summary(df$transmission)
+t_auto = subset(df, transmission == "automatic")
+t_mechanical = subset(df, transmission == "mechanical")
+t.test(x = t_auto$price, y = t_mechanical$price, conf.level = 0.99)
+```
+
