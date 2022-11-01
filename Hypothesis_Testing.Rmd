@@ -231,3 +231,27 @@ Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu
 Hypothesis_test_price_without_feature6
 ```
 
+
+
+## Chi square test of independence on Year of manufacture and price
+
+Car resale prices are dependent on the year of manufacture?
+
+```{r}
+p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
+year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
+lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
+df <- as.data.frame(do.call(cbind, lists))
+conTable = table(df)
+print(conTable)
+```
+
+```{r}
+df
+```
+
+```{r results=T}
+chitest = chisq.test(conTable)
+chitest
+```
+
