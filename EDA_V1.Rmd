@@ -1,7 +1,7 @@
 ---
-title: "EDA - Resell car prices"
-author: "Yashwant Bhaidkar"
-date: "today"
+title: "DATS 6101: Intro to Data Science - Mid Term Project"
+author: "Team 8: Dataverse"
+date: "`r Sys.Date()`"
 output:
   html_document:
     code_folding: hide
@@ -129,6 +129,28 @@ plot3
 
 violin plot, checking odometer distribution and box plot in the same graph. 
 
+
+Scatter plot with fitting line
+
+
+```{r}
+plot(car_data$odometer_value, car_data$price_usd) 
+```
+
+```{r}
+updated_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+```
+
+```{r}
+ggplot(updated_data, aes(x=odometer_value, y=price_usd)) +
+   geom_point()+
+   geom_smooth(method=lm) +
+   labs(title = 'scatter plot - car prices vs odometer values') +
+   labs(x = 'odometer values(in KM)', y = 'price(in USD)') + scale_x_continuous(name='odometer values(in KM)', labels = scales::comma)
+```
+
+By removing outliers from odometer value, we are getting good relation for price vs odometer value.
+
 ## year_produced
 
 ```{r results=T}
@@ -198,3 +220,52 @@ plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) +
 plot_body
 ```
 
+```{r}
+top_10_costy_brands <- df_new[df_new$price_usd %in% tail(sort(df_new$price_usd),10),]
+top_10_costy_brands
+```
+
+```{r}
+top_10_manufactuerer_avg_price=subset(car_data,manufacturer_name=='Acura'|manufacturer_name=="Buick"|manufacturer_name=="cadillac"|manufacturer_name=="Infiniti"|manufacturer_name=="Jaguar"|manufacturer_name=="Land Rover"| manufacturer_name=='Lexus'| manufacturer_name=="Mini"|manufacturer_name=="Porsche"|manufacturer_name=="Skoda")
+top_10_manufactuerer_avg_price
+```
+
+```{r results=T}
+plot_body <- ggplot(top_10_manufactuerer_avg_price, aes(x=manufacturer_name, y=price_usd)) + 
+  geom_boxplot(color="black", fill="Yellow")+
+  labs(x="Car_Manufacturer",y="Price(in USD)") + labs(title=" Top 10 Manufacturers and its Car Price") 
+plot_body
+```
+
+## Car color
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=color, y=price_usd)) + 
+  geom_boxplot(color="blue", fill="orange")+
+  labs(x="Car Color",y="price_usd") + labs(title="Boxplot - Car Color and its Price (In USD)") 
+plot1
+```
+
+## has warranty feature
+
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=has_warranty, y=price_usd)) + 
+  geom_boxplot(color="black", fill="violet")+
+  labs(x="has_warranty",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on car is in warranty or not") 
+plot_warranty
+```
+
+As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
+Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
+
+## 
+
+```{r result=T}
+plot_upgrade <- ggplot(car_data, aes(x=up_counter, y=price_usd)) + 
+  geom_smooth(color="black", fill="#F48FB1")+
+  labs(x="No of Upgrades",y="price_usd") + labs(title="No of upgrades vs Price_usd") 
+plot_upgrade
+ 
+```
+
+Certain number of upgrades are actually impacting the car price but the resale price is going down after so many upgrades.
