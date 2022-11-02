@@ -14,6 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 #Loading libraries
 library(ezids)
 library(ggplot2)
+library(corrplot)
+library(tidyverse)
 ```
 
 
@@ -23,7 +25,7 @@ car_data = data.frame(read.csv('cars.csv'))
 str(car_data)
 ```
 
-Data cleaning
+## Data cleaning
 
 ```{r results=T}
 car_data$transmission = as.factor(car_data$transmission)
@@ -38,11 +40,6 @@ car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
 car_data$location_region = as.factor(car_data$location_region)
 ```
 
-
-
-```{r results=T}
-#car_data$year_produced <- strptime(car_data$year_produced, "%Y")
-```
 
 ```{r results=T}
 feature_cols <- c(20:29)
@@ -74,6 +71,8 @@ sapply(car_data, function(x) sum(is.na(x)))
 
 ## Unknown features(feature0 to feature9)
 
+### Feature 0
+
 Is feature_0 impacting the average car price?
 
 ```{r}
@@ -82,10 +81,10 @@ without_feature_0<-subset(car_data,feature_0 == 'False')
 ```
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature0 = t.test(x=with_feature_0$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -97,6 +96,10 @@ Hypothesis_test_price_without_feature0 = t.test(x=without_feature_0$price_usd,mu
 Hypothesis_test_price_without_feature0
 ```
 
+We got low price interval if feature0 is in the car. So probably its outdated feature.
+
+### Feature 1
+
 Is feature_1 impacting the average car price?
 
 ```{r}
@@ -106,10 +109,10 @@ without_feature_1<-subset(car_data,feature_1 == 'False')
 
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature1 = t.test(x=with_feature_1$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -121,6 +124,10 @@ Hypothesis_test_price_without_feature1 = t.test(x=without_feature_1$price_usd,mu
 Hypothesis_test_price_without_feature1
 ```
 
+We got low price interval if feature0 is in the car.
+
+### Feature 2
+
 Is feature_2 impacting the average car price?
 
 ```{r}
@@ -130,10 +137,10 @@ without_feature_2<-subset(car_data,feature_2 == 'False')
 
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature2 = t.test(x=with_feature_2$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -144,6 +151,9 @@ Hypothesis_test_price_without_feature2 = t.test(x=without_feature_2$price_usd,mu
 #default conf.level = 0.95
 Hypothesis_test_price_without_feature2
 ```
+
+### Feature_3
+
 ```{r}
 with_feature_3<-subset(car_data,feature_3 == 'True')
 without_feature_3<-subset(car_data,feature_3 == 'False')
@@ -151,10 +161,10 @@ without_feature_3<-subset(car_data,feature_3 == 'False')
 
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature3 = t.test(x=with_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -166,16 +176,18 @@ Hypothesis_test_price_without_feature3 = t.test(x=without_feature_3$price_usd,mu
 Hypothesis_test_price_without_feature3
 ```
 
+### Feature_4
+
 ```{r}
 with_feature_4<-subset(car_data,feature_4 == 'True')
 without_feature_4<-subset(car_data,feature_4 == 'False')
 ```
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd) 
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature4 = t.test(x=with_feature_4$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -187,6 +199,8 @@ Hypothesis_test_price_without_feature4 = t.test(x=without_feature_4$price_usd,mu
 Hypothesis_test_price_without_feature4
 ```
 
+### Feature_5
+
 ```{r}
 with_feature_5<-subset(car_data,feature_5 == 'True')
 without_feature_5<-subset(car_data,feature_5 == 'False')
@@ -194,10 +208,10 @@ without_feature_5<-subset(car_data,feature_5 == 'False')
 
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd) 
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature5 = t.test(x=with_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -209,6 +223,8 @@ Hypothesis_test_price_without_feature5 = t.test(x=without_feature_5$price_usd,mu
 Hypothesis_test_price_without_feature5
 ```
 
+### Feature_6
+
 ```{r}
 with_feature_6<-subset(car_data,feature_6 == 'True')
 without_feature_6<-subset(car_data,feature_6 == 'False')
@@ -216,10 +232,10 @@ without_feature_6<-subset(car_data,feature_6 == 'False')
 
 
 ```{r results=T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_feature6 = t.test(x=with_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -230,6 +246,7 @@ Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu
 #default conf.level = 0.95
 Hypothesis_test_price_without_feature6
 ```
+
 
 ## Anova test on car brands
 
@@ -243,7 +260,14 @@ price_aov
 xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
 ```
 
+In this test, we are checking that is there any significant difference in the mean price on the basis of car manufacturer.
+H0: there is no difference in the mean prices of the cars based on manufacturer
+H1: there is a difference in the mean prices of the cars based on manufacturer
 
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than α hence we reject the null hypothesis.
+It means there is a significant difference in the mean price based on manufacturer.
 
 ## Warranty
 
@@ -256,10 +280,10 @@ without_warranty<-subset(car_data,has_warranty == 'False')
 
 
 ```{r results = T}
-#mean of GRE score
-mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+
+mean_price = mean(car_data$price_usd)
 mean_price
-#for GRE score of admitted students 
+
 
 Hypothesis_test_price_with_warranty = t.test(x=with_warranty$price_usd,mu = mean_price ,conf.level = 0.95) 
 #default conf.level = 0.95
@@ -271,6 +295,9 @@ Hypothesis_test_price_without_warranty = t.test(x=without_warranty$price_usd,mu 
 Hypothesis_test_price_without_warranty
 ```
 
+
+as we can see that mean price of the whole car dataset is not falling under the time interval we got after separating the data based on warranty feature.
+Also there is significant difference in the mean car price as we got price intervals which are not overlapping.
 
 ## Chi square test of independence on Year of manufacture and price
 
@@ -286,7 +313,7 @@ print(conTable)
 ```
 
 ```{r}
-df
+head(df,3)
 ```
 
 ```{r results=T}
@@ -294,12 +321,23 @@ chitest = chisq.test(conTable)
 chitest
 ```
 
+With the chi square test of independence, we are checking that resale car prices are dependent on the year of manufacture or not.
+H0: Car prices and year of production are independent of each other.
+H1: Car prices and year of production are dependent of each other.
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+as we got p value less than 0.05 hance we are rejecting the null hypothesis.
+
+It means prices and year of production are dependent of each other
+
+
+## corrplot
+
+
 Correlation plot between the numerical features is considered
 
 ```{r include=FALSE}
-library(corrplot)
-library(tidyverse)
-
 car_data %>% select_if(is.numeric)->cars_numerical
 ```
 
@@ -322,6 +360,8 @@ Alternate Hypothesis    H1 : not all means are equal
 Decide on the significance level
 significance level is alpha=0.05
 
+## Anova test for car color
+
 ```{r}
 df_aov_1 = aov(price_usd ~  color , car_data)
 summary(df_aov_1)
@@ -341,6 +381,8 @@ Alternate Hypothesis    H1 : not all means are equal
 Decide on the significance level
 significance level is alpha=0.05
 
+## Anova test for body type
+
 ```{r}
 df_aov_4 = aov(price_usd ~  body_type , car_data)
 summary(df_aov_4)
@@ -351,7 +393,7 @@ The p-value is less than the specified significance level of 0.05; we reject H0.
 Conclusion from anova test:
 Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
 
-Testing engine_fuel type an engine_type
+## Testing engine_fuel type an engine_type
 
 In order to showcase the one-way ANOVA hypothesis test we examine the mean resale prices of cars, grouped by their engine fuel type. To make it clear, in this example the classification/grouping is done by one variable, the major variable, the so-called factor, thus we are conducting a one-way ANOVA. In this exercise we want to test if the mean annual resale price of cars is different for different engine fuel types.
 In the same way, one way anova test is performed on the engine type.
@@ -394,7 +436,7 @@ The p-value is less than the specified significance level of 0.05; we reject H0.
 Conclusion from anova test:
 Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
 
-t-test for transmission type as there are only two sub groups
+## t-test for transmission type as there are only two sub groups
 
 ```{r T test, echo=TRUE}
 summary(car_data$transmission)
@@ -402,4 +444,25 @@ t_auto = subset(car_data, transmission == "automatic")
 t_mechanical = subset(car_data, transmission == "mechanical")
 t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
 ```
+
+## Anova test on car brands
+
+All car brands have same average car price or not?
+```{r}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov
+```
+
+```{r}
+xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
+```
+
+As we have 55 car brands, Running the test on all car brands to check if there is any significant difference in mean car price based on manufacturer.
+
+H0: there is no difference in the mean prices based on car brands.
+H1: there is a significant difference in the mean prices based on car brands.
+
+As we got p value less than 0.05, we will reject the null hypothesis.
+It means there is a significant difference based in the mean car prices based on manufacturer 
+
 

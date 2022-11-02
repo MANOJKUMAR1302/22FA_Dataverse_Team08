@@ -220,6 +220,11 @@ plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) +
 plot_body
 ```
 
+```{r results=T}
+df_new <- aggregate( price_usd ~ manufacturer_name, car_data, median )
+df_new
+```
+
 ```{r}
 top_10_costy_brands <- df_new[df_new$price_usd %in% tail(sort(df_new$price_usd),10),]
 top_10_costy_brands
