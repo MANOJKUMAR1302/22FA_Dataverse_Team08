@@ -307,32 +307,97 @@ car_data %>% select_if(is.numeric)->cars_numerical
 corrplot(cor(cars_numerical), method = 'number')
 ```
 
-Anova test for color and body type is performed
+The above correlation plot shows the relation between all the numerical features and the price_usd.
+Here, odometer_value has negative correlation with price(cc=-0.42). Year of production is highly correlated among the others and the least correlated one is up_counter and duration_listed.
+
+ANOVA is helpful for testing three or more variables.It is similar to multiple two-sample t-tests.The one-way ANOVA is used to determine whether there are any statistically significant differences between the means of three or more independent (unrelated) groups.
+
+One way Anova test for color and body type is performed
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all color groups
+Null Hypothesis         H0 : all means are equal
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
 ```{r}
 df_aov_1 = aov(price_usd ~  color , car_data)
 summary(df_aov_1)
 ```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of color is different from each other.
+
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of car body type
+Null Hypothesis         H0 : all means are equal
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
 
 ```{r}
 df_aov_4 = aov(price_usd ~  body_type , car_data)
 summary(df_aov_4)
 ```
 
-Anova test is performed on engine fuel and engine type
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+Testing engine_fuel type an engine_type
+
+In order to showcase the one-way ANOVA hypothesis test we examine the mean resale prices of cars, grouped by their engine fuel type. To make it clear, in this example the classification/grouping is done by one variable, the major variable, the so-called factor, thus we are conducting a one-way ANOVA. In this exercise we want to test if the mean annual resale price of cars is different for different engine fuel types.
+In the same way, one way anova test is performed on the engine type.
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine fuel types.
+Null Hypothesis         H0 : μ1=μ2=μ3=μ4=μ5=μ6
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
 ```{r}
 df_aov_2 = aov(price_usd~  engine_fuel , car_data)
 summary(df_aov_2)
 ```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine fuel type is different from each other.
+
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine types.
+Null Hypothesis         H0 : μ1=μ2=μ3
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+Significance level is alpha=0.05
 
 ```{r}
 df_aov_3 = aov(price_usd~  engine_type , car_data)
 summary(df_aov_3)
 ```
 
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
+
 t-test for transmission type as there are only two sub groups
 
 ```{r T test, echo=TRUE}
-summary(df$transmission)
+summary(car_data$transmission)
 t_auto = subset(car_data, transmission == "automatic")
 t_mechanical = subset(car_data, transmission == "mechanical")
 t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
