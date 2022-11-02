@@ -255,51 +255,47 @@ chitest = chisq.test(conTable)
 chitest
 ```
 
-```{r cars, include=FALSE}
-
-df = read.csv("cars.csv", header = T, stringsAsFactors = TRUE)
-
-df = subset(df, select=c("manufacturer_name", "model_name", "transmission", "color", "odometer_value", "year_produced", "engine_fuel", "engine_has_gas", "engine_type", "engine_capacity", "body_type", "has_warranty",
-"state", "drivetrain", "price_usd", "is_exchangeable", "number_of_photos",  "up_counter"))
-```
+Correlation plot between the numerical features is considered
 
 ```{r include=FALSE}
 library(corrplot)
 library(tidyverse)
 
-df %>% select_if(is.numeric)->cars_numerical
+car_data %>% select_if(is.numeric)->cars_numerical
 ```
 
 ```{r cor}
 corrplot(cor(cars_numerical), method = 'number')
 ```
 
-Anova test for color body type 
+Anova test for color and body type is performed
 ```{r}
-df_aov_1 = aov(price_usd ~  color , df)
+df_aov_1 = aov(price_usd ~  color , car_data)
 summary(df_aov_1)
 ```
 
 ```{r}
-df_aov_4 = aov(price_usd ~  body_type , df)
+df_aov_4 = aov(price_usd ~  body_type , car_data)
 summary(df_aov_4)
 ```
+
+Anova test is performed on engine fuel and engine type
 ```{r}
-df_aov_2 = aov(price_usd~  engine_fuel , df)
+df_aov_2 = aov(price_usd~  engine_fuel , car_data)
 summary(df_aov_2)
 ```
 
 ```{r}
-df_aov_3 = aov(price_usd~  engine_type , df)
+df_aov_3 = aov(price_usd~  engine_type , car_data)
 summary(df_aov_3)
 ```
 
-t-test for transmission type
+t-test for transmission type as there are only two sub groups
 
 ```{r T test, echo=TRUE}
 summary(df$transmission)
-t_auto = subset(df, transmission == "automatic")
-t_mechanical = subset(df, transmission == "mechanical")
-t.test(x = t_auto$price, y = t_mechanical$price, conf.level = 0.99)
+t_auto = subset(car_data, transmission == "automatic")
+t_mechanical = subset(car_data, transmission == "mechanical")
+t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
 ```
 
