@@ -1,7 +1,7 @@
 ---
-title: "EDA - Resell car prices"
-author: "Yashwant Bhaidkar"
-date: "today"
+title: "DATS 6101: Intro to Data Science - Mid Term Project"
+author: "Team 8: Dataverse"
+date: "`r Sys.Date()`"
 output:
   html_document:
     code_folding: hide
@@ -220,3 +220,19 @@ plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) +
 plot_body
 ```
 
+```{r}
+top_10_costy_brands <- df_new[df_new$price_usd %in% tail(sort(df_new$price_usd),10),]
+top_10_costy_brands
+```
+
+```{r}
+top_10_manufactuerer_avg_price=subset(car_data,manufacturer_name=='Acura'|manufacturer_name=="Buick"|manufacturer_name=="cadillac"|manufacturer_name=="Infiniti"|manufacturer_name=="Jaguar"|manufacturer_name=="Land Rover"| manufacturer_name=='Lexus'| manufacturer_name=="Mini"|manufacturer_name=="Porsche"|manufacturer_name=="Skoda")
+top_10_manufactuerer_avg_price
+```
+
+```{r results=T}
+plot_body <- ggplot(top_10_manufactuerer_avg_price, aes(x=manufacturer_name, y=price_usd)) + 
+  geom_boxplot(color="black", fill="Yellow")+
+  labs(x="Car_Manufacturer",y="Price(in USD)") + labs(title=" Top 10 Manufacturers and its Car Price") 
+plot_body
+```
