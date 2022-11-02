@@ -466,3 +466,31 @@ As we got p value less than 0.05, we will reject the null hypothesis.
 It means there is a significant difference based in the mean car prices based on manufacturer 
 
 
+```{r}
+
+ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
+
+```
+
+
+## Drivetrain
+
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=drivetrain, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#AF7AC5")+
+  labs(x="drivetrain",y="price_usd") + labs(title="boxplot - Car Price distribution based on car drivetrain") 
+plot_warranty
+```
+
+Car prices are high in case of all wheel drive and for front and rear wheel drive, the median price range is almost same.
+
+
+## Duration listed
+
+relation of resale prices with duration listed on the catalog
+
+```{r results=T}
+ggplot(data = car_data, aes(x = duration_listed, y = price_usd)) +
+    geom_smooth(color = '#AF7AC5') + 
+    labs(title = 'Car prices based on duration listed') + labs(x="Duration listed",y="Price(in USD)")
+```
