@@ -129,6 +129,28 @@ plot3
 
 violin plot, checking odometer distribution and box plot in the same graph. 
 
+
+Scatter plot with fitting line
+
+
+```{r}
+plot(car_data$odometer_value, car_data$price_usd) 
+```
+
+```{r}
+updated_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+```
+
+```{r}
+ggplot(updated_data, aes(x=odometer_value, y=price_usd)) +
+   geom_point()+
+   geom_smooth(method=lm) +
+   labs(title = 'scatter plot - car prices vs odometer values') +
+   labs(x = 'odometer values(in KM)', y = 'price(in USD)') + scale_x_continuous(name='odometer values(in KM)', labels = scales::comma)
+```
+
+By removing outliers from odometer value, we are getting good relation for price vs odometer value.
+
 ## year_produced
 
 ```{r results=T}
