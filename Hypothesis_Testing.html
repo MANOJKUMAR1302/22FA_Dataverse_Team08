@@ -643,7 +643,8 @@ str(car_data)</code></pre>
 ##  $ feature_8        : chr  &quot;True&quot; &quot;False&quot; &quot;True&quot; &quot;False&quot; ...
 ##  $ feature_9        : chr  &quot;True&quot; &quot;True&quot; &quot;True&quot; &quot;False&quot; ...
 ##  $ duration_listed  : int  16 83 151 86 7 67 307 73 87 43 ...</code></pre>
-<p>Data cleaning</p>
+<div id="data-cleaning" class="section level2">
+<h2>Data cleaning</h2>
 <pre class="r"><code>car_data$transmission = as.factor(car_data$transmission)
 car_data$engine_fuel = as.factor(car_data$engine_fuel)
 car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
@@ -735,6 +736,7 @@ sapply(car_data, function(x) sum(is.na(x)))</code></pre>
 ##                 0                 0                 0                 0 
 ##         feature_9   duration_listed 
 ##                 0                 0</code></pre>
+</div>
 <div id="unknown-featuresfeature0-to-feature9" class="section level2">
 <h2>Unknown features(feature0 to feature9)</h2>
 <div id="feature-0" class="section level3">
@@ -1314,6 +1316,100 @@ t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)</cod
 ## sample estimates:
 ## mean of x mean of y 
 ##  10957.18   4467.64</code></pre>
+</div>
+<div id="anova-test-on-car-brands-1" class="section level2">
+<h2>Anova test on car brands</h2>
+<p>All car brands have same average car price or not?</p>
+<pre class="r"><code>price_aov&lt;-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov</code></pre>
+<pre><code>## Call:
+##    aov(formula = price_usd ~ manufacturer_name, data = car_data)
+## 
+## Terms:
+##                 manufacturer_name    Residuals
+## Sum of Squares       2.944511e+11 1.297652e+12
+## Deg. of Freedom                54        38476
+## 
+## Residual standard error: 5807.433
+## Estimated effects may be unbalanced</code></pre>
+<pre class="r"><code>xkabledply(price_aov, title = &#39;Anova test result impact of manufacturer_name on car price&#39;)</code></pre>
+<table class="table table-striped" style="width: auto !important; ">
+<caption>
+Anova test result impact of manufacturer_name on car price
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Df
+</th>
+<th style="text-align:right;">
+Sum Sq
+</th>
+<th style="text-align:right;">
+Mean Sq
+</th>
+<th style="text-align:right;">
+F value
+</th>
+<th style="text-align:right;">
+Pr(&gt;F)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+manufacturer_name
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+2.944511e+11
+</td>
+<td style="text-align:right;">
+5452798434
+</td>
+<td style="text-align:right;">
+161.678
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Residuals
+</td>
+<td style="text-align:right;">
+38476
+</td>
+<td style="text-align:right;">
+1.297652e+12
+</td>
+<td style="text-align:right;">
+33726280
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+<p>As we have 55 car brands, Running the test on all car brands to check
+if there is any significant difference in mean car price based on
+manufacturer.</p>
+<p>H0: there is no difference in the mean prices based on car brands.
+H1: there is a significant difference in the mean prices based on car
+brands.</p>
+<p>As we got p value less than 0.05, we will reject the null hypothesis.
+It means there is a significant difference based in the mean car prices
+based on manufacturer</p>
 </div>
 
 

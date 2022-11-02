@@ -25,7 +25,7 @@ car_data = data.frame(read.csv('cars.csv'))
 str(car_data)
 ```
 
-Data cleaning
+## Data cleaning
 
 ```{r results=T}
 car_data$transmission = as.factor(car_data$transmission)
@@ -444,4 +444,25 @@ t_auto = subset(car_data, transmission == "automatic")
 t_mechanical = subset(car_data, transmission == "mechanical")
 t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
 ```
+
+## Anova test on car brands
+
+All car brands have same average car price or not?
+```{r}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov
+```
+
+```{r}
+xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
+```
+
+As we have 55 car brands, Running the test on all car brands to check if there is any significant difference in mean car price based on manufacturer.
+
+H0: there is no difference in the mean prices based on car brands.
+H1: there is a significant difference in the mean prices based on car brands.
+
+As we got p value less than 0.05, we will reject the null hypothesis.
+It means there is a significant difference based in the mean car prices based on manufacturer 
+
 
