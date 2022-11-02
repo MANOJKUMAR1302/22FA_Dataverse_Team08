@@ -92,7 +92,8 @@ There might be the possibility that vehicle is used for longer time
 
 ```{r results=T}
 p <- ggplot(car_data, aes(x = price_usd)) +
-     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5)
+     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5) +
+      labs(x = 'price(In USD)') + labs(title = 'Distribution of resale prices - Histogram')
 p
 ```
 
