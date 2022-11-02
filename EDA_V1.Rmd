@@ -236,3 +236,36 @@ plot_body <- ggplot(top_10_manufactuerer_avg_price, aes(x=manufacturer_name, y=p
   labs(x="Car_Manufacturer",y="Price(in USD)") + labs(title=" Top 10 Manufacturers and its Car Price") 
 plot_body
 ```
+
+## Car color
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=color, y=price_usd)) + 
+  geom_boxplot(color="blue", fill="orange")+
+  labs(x="Car Color",y="price_usd") + labs(title="Boxplot - Car Color and its Price (In USD)") 
+plot1
+```
+
+## has warranty feature
+
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=has_warranty, y=price_usd)) + 
+  geom_boxplot(color="black", fill="violet")+
+  labs(x="has_warranty",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on car is in warranty or not") 
+plot_warranty
+```
+
+As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
+Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
+
+## 
+
+```{r result=T}
+plot_upgrade <- ggplot(car_data, aes(x=up_counter, y=price_usd)) + 
+  geom_smooth(color="black", fill="#F48FB1")+
+  labs(x="No of Upgrades",y="price_usd") + labs(title="No of upgrades vs Price_usd") 
+plot_upgrade
+ 
+```
+
+Certain number of upgrades are actually impacting the car price but the resale price is going down after so many upgrades.
