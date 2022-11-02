@@ -269,3 +269,65 @@ plot_upgrade
 ```
 
 Certain number of upgrades are actually impacting the car price but the resale price is going down after so many upgrades.
+
+## body Type
+
+```{r results=T}
+plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#F48FB1")+
+  labs(x="body type",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on body type") 
+plot_body
+```
+
+#Number of photos
+
+Creating buckets for number of photos feature
+
+```{r}
+
+Photo_bucket <- within(car_data, {   
+  Photo_bucket.cat <- NA # need to initialize variable
+  Photo_bucket.cat[number_of_photos < 6] <- "0-5"
+  Photo_bucket.cat[number_of_photos >= 6 & number_of_photos < 11] <- "6-10"
+  Photo_bucket.cat[number_of_photos >= 11 & number_of_photos < 16] <- "11-15"
+  Photo_bucket.cat[number_of_photos >= 16 & number_of_photos < 21] <- "16-20"
+  Photo_bucket.cat[number_of_photos >= 21 & number_of_photos < 26] <- "21-25"
+  Photo_bucket.cat[number_of_photos >= 26 & number_of_photos < 31] <- "26-30"
+  Photo_bucket.cat[number_of_photos > 30] <- "more than 30"
+   } )
+
+#str(dat)
+
+
+Photo_bucket$Photo_bucket.cat <- factor(Photo_bucket$Photo_bucket.cat, levels= c("0-5","6-10","11-15","16-20","21-25","26-30","more than 30"))
+
+```
+
+```{r}
+
+ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
+
+```
+
+
+## Drivetrain
+
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=drivetrain, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#AF7AC5")+
+  labs(x="drivetrain",y="price_usd") + labs(title="boxplot - Car Price distribution based on car drivetrain") 
+plot_warranty
+```
+
+Car prices are high in case of all wheel drive and for front and rear wheel drive, the median price range is almost same.
+
+
+## Duration listed
+
+relation of resale prices with duration listed on the catalog
+
+```{r results=T}
+ggplot(data = car_data, aes(x = duration_listed, y = price_usd)) +
+    geom_smooth(color = '#AF7AC5') + 
+    labs(title = 'Car prices based on duration listed') + labs(x="Duration listed",y="Price(in USD)")
+```
