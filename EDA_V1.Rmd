@@ -17,7 +17,7 @@ output:
 
 ```{r , results=T}
 # knitr::opts_chunk$set(warning = F, results = "markup", message = F)
-knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide",message = F)
 options(scientific=T, digits = 3)
 ```
 
