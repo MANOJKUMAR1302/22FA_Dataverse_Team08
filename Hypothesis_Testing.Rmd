@@ -466,6 +466,20 @@ As we got p value less than 0.05, we will reject the null hypothesis.
 It means there is a significant difference based in the mean car prices based on manufacturer 
 
 
+## Anova test on top 10 car brands
+
+
+```{r}
+car_data_top_10 <- car_data[car_data$manufacturer_name %in% c("Acura","Buick","Cadillac","Infiniti","Jaguar","Land Rover","Lexus","Mini","Porsche","Skoda"),]
+nrow(car_data_top_10)
+```
+
+```{r}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data_top_10)
+price_aov
+xkabledply(price_aov, title = 'Anova test result impact of top 10 manufacturer_name on car price')
+```
+
 ## Anova test on Drivetrain
 
 Is there any change in the resale price based on drive train feature? 
