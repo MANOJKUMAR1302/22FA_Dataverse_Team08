@@ -30,7 +30,7 @@ library(tidyverse)
 
 
 
-```{r}
+```{r results=T}
 car_data = data.frame(read.csv('cars.csv'))
 str(car_data)
 ```
@@ -91,7 +91,7 @@ H1: there is a difference in the mean price of the cars and the mean price based
 
 Is feature_0 impacting the average car price?
 
-```{r}
+```{r results=T}
 with_feature_0<-subset(car_data,feature_0 == 'True')
 without_feature_0<-subset(car_data,feature_0 == 'False')
 ```
@@ -118,7 +118,7 @@ We got low price interval if feature0 is in the car. So probably its outdated fe
 
 Is feature_1 impacting the average car price?
 
-```{r}
+```{r results=T}
 with_feature_1<-subset(car_data,feature_1 == 'True')
 without_feature_1<-subset(car_data,feature_1 == 'False')
 ```
@@ -146,7 +146,7 @@ We got low price interval if feature0 is in the car.
 
 Is feature_2 impacting the average car price?
 
-```{r}
+```{r results=T}
 with_feature_2<-subset(car_data,feature_2 == 'True')
 without_feature_2<-subset(car_data,feature_2 == 'False')
 ```
@@ -170,7 +170,7 @@ Hypothesis_test_price_without_feature2
 
 ### Feature_3
 
-```{r}
+```{r results=T}
 with_feature_3<-subset(car_data,feature_3 == 'True')
 without_feature_3<-subset(car_data,feature_3 == 'False')
 ```
@@ -194,7 +194,7 @@ Hypothesis_test_price_without_feature3
 
 ### Feature_4
 
-```{r}
+```{r results=T}
 with_feature_4<-subset(car_data,feature_4 == 'True')
 without_feature_4<-subset(car_data,feature_4 == 'False')
 ```
@@ -217,7 +217,7 @@ Hypothesis_test_price_without_feature4
 
 ### Feature_5
 
-```{r}
+```{r results=T}
 with_feature_5<-subset(car_data,feature_5 == 'True')
 without_feature_5<-subset(car_data,feature_5 == 'False')
 ```
@@ -241,7 +241,7 @@ Hypothesis_test_price_without_feature5
 
 ### Feature_6
 
-```{r}
+```{r results=T}
 with_feature_6<-subset(car_data,feature_6 == 'True')
 without_feature_6<-subset(car_data,feature_6 == 'False')
 ```
@@ -265,7 +265,7 @@ Hypothesis_test_price_without_feature6
 
 ### Feature_7
 
-```{r}
+```{r results=T}
 with_feature_7<-subset(car_data,feature_7 == 'True')
 without_feature_7<-subset(car_data,feature_7 == 'False')
 ```
@@ -285,9 +285,9 @@ Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu
 Hypothesis_test_price_without_feature7
 ```
 
-###feature-8
+### Feature_8
 
-```{r}
+```{r results=T}
 with_feature_8<-subset(car_data,feature_8 == 'True')
 without_feature_8<-subset(car_data,feature_8 == 'False')
 ```
@@ -306,9 +306,9 @@ Hypothesis_test_price_without_feature8 = t.test(x=without_feature_8$price_usd,mu
 Hypothesis_test_price_without_feature8
 ```
 
-###feature-9
+### Feature_9
 
-```{r}
+```{r results=T}
 with_feature_9<-subset(car_data,feature_9 == 'True')
 without_feature_9<-subset(car_data,feature_9 == 'False')
 ```
@@ -336,12 +336,12 @@ As we are getting the p-value significantly less and we can clearly see that the
 ## Anova test on car brands
 
 All car brands have same average car price or not?
-```{r}
+```{r results=T}
 price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
 price_aov
 ```
 
-```{r}
+```{r results=T}
 xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
 ```
 
@@ -358,7 +358,7 @@ It means there is a significant difference in the mean price based on manufactur
 
 is there any impact of warranty of a car on the resale price?
 
-```{r}
+```{r results=T}
 with_warranty<-subset(car_data,has_warranty == 'True')
 without_warranty<-subset(car_data,has_warranty == 'False')
 ```
@@ -388,7 +388,7 @@ Also there is significant difference in the mean car price as we got price inter
 
 Car resale prices are dependent on the year of manufacture?
 
-```{r}
+```{r results=T}
 p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
 year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
 lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
@@ -397,7 +397,7 @@ conTable = table(df)
 print(conTable)
 ```
 
-```{r}
+```{r results=T}
 head(df,3)
 ```
 
@@ -426,7 +426,7 @@ Correlation plot between the numerical features is considered
 car_data %>% select_if(is.numeric)->cars_numerical
 ```
 
-```{r cor}
+```{r results=T}
 corrplot(cor(cars_numerical), method = 'number')
 ```
 
@@ -447,7 +447,7 @@ significance level is alpha=0.05
 
 ## Anova test for car color
 
-```{r}
+```{r results=T}
 df_aov_1 = aov(price_usd ~  color , car_data)
 summary(df_aov_1)
 ```
@@ -468,7 +468,7 @@ significance level is alpha=0.05
 
 ## Anova test for body type
 
-```{r}
+```{r results=T}
 df_aov_4 = aov(price_usd ~  body_type , car_data)
 summary(df_aov_4)
 ```
@@ -491,7 +491,7 @@ Alternate Hypothesis    H1 : not all means are equal
 Decide on the significance level
 significance level is alpha=0.05
 
-```{r}
+```{r results=T}
 df_aov_2 = aov(price_usd~  engine_fuel , car_data)
 summary(df_aov_2)
 ```
@@ -510,7 +510,7 @@ Alternate Hypothesis    H1 : not all means are equal
 Decide on the significance level
 Significance level is alpha=0.05
 
-```{r}
+```{r results=T}
 df_aov_3 = aov(price_usd~  engine_type , car_data)
 summary(df_aov_3)
 ```
@@ -533,12 +533,12 @@ t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
 ## Anova test on car brands
 
 All car brands have same average car price or not?
-```{r}
+```{r results=T}
 price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
 price_aov
 ```
 
-```{r}
+```{r results=T}
 xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
 ```
 
@@ -554,12 +554,12 @@ It means there is a significant difference based in the mean car prices based on
 ## Anova test on top 10 car brands
 
 
-```{r}
+```{r results=T}
 car_data_top_10 <- car_data[car_data$manufacturer_name %in% c("Acura","Buick","Cadillac","Infiniti","Jaguar","Land Rover","Lexus","Mini","Porsche","Skoda"),]
 nrow(car_data_top_10)
 ```
 
-```{r}
+```{r results=T}
 price_aov<-aov(price_usd ~ manufacturer_name, data=car_data_top_10)
 price_aov
 xkabledply(price_aov, title = 'Anova test result impact of top 10 manufacturer_name on car price')
@@ -574,7 +574,7 @@ cartrain_aov<-aov(price_usd ~ drivetrain, data=car_data)
 cartrain_aov
 ```
 
-```{r}
+```{r results=T}
 xkabledply(cartrain_aov, title = 'Anova test result impact of drivetrain on car prices')
 ```
 
