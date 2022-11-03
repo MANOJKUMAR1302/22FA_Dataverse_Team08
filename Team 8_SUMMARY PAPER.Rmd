@@ -95,4 +95,46 @@ https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog?selectcars.csv=
 
 •	Our team used exploratory data analysis and hypothesis testing to estimate the relationship between the dependent variable (Car's price), and several independent variables that included both numerical and categorical values.
 
+## Limitations of Dataset
+•  We have the data only till 2019. So, we don’t know the post covid trends and the changes in the prices couldn’t be explained.
+
+•  The dataset has data only related to the Belarus region. There is no global exposure.
+
+•  More data can lead to predictions that are more reliable. 
+
+•  Second, there might be additional traits that are reliable predictors. 
+
+•  Here are some examples of variables that could enhance the model: doors, gas mileage (mpg), time spent undergoing mechanical and cosmetic repairs, used-to-new ratio, and appraisal-to-trade ratio.
+
+• There are ten unknown features (0-9) in the dataset. We don't know which part of the car these unknown features represent. Based on the results, we can conclude whether the feature is outdated or a luxury car feature.
+
+## SMART Questions
+
+**Why team came up with the below smart Questions?**
+
+Data Verse team members are avid vehicle enthusiasts, therefore we used their knowledge of the most prevalent and crucial aspects to come up with SMART questions. In order to arrive at a conclusion on the target variable price, a few questions were posed, and analysis was conducted utilizing Boxplots, Scatterplots, t-tests, anova, and chi-square tests, among other tools.
+
+
+**What are the factors affecting the prices of used cars?**
+
+1)	Is the warranty impacting the resale value of the cars?
+
+2)	Does the odometer value have any impact on the car prices?
+
+3)	Are the car prices dependent on the manufacturer or year of production?
+
+4)	Does colour and body type have any impact on the resale prices of the cars?
+
+5)	Does the number of photos have any impact on the car’s resale value?
+
+6)	Does drivetrain have any impact on the car’s resale value?
+
+7)	Are the resale prices of the cars dependent on fuel and engine type?
+
+8)	Are the prices of the cars different based on the transmission type and engine capacity?
+
+9)	Does unknown features have any impact on car prices?
+
+
+
 
