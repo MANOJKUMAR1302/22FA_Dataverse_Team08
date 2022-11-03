@@ -270,6 +270,7 @@ Hypothesis_test_price_without_feature7
 ```
 
 ###feature-8
+
 ```{r}
 with_feature_8<-subset(car_data,feature_8 == 'True')
 without_feature_8<-subset(car_data,feature_8 == 'False')
@@ -290,6 +291,7 @@ Hypothesis_test_price_without_feature8
 ```
 
 ###feature-9
+
 ```{r}
 with_feature_9<-subset(car_data,feature_9 == 'True')
 without_feature_9<-subset(car_data,feature_9 == 'False')
