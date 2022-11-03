@@ -344,3 +344,108 @@ corrplot(cor(cars_numerical), method = 'number')
 The above correlation plot shows the relation between all the numerical features and the price_usd.
 
 Here, odometer_value has negative correlation with price(cc=-0.42). 
+
+## Are the car prices dependent on the manufacturer or year of production?
+
+**Based on Manufacturer**
+
+Top 10 Brands and their Median price in USD.
+
+```{r}
+df_new <- aggregate( price_usd ~ manufacturer_name, car_data, median )
+top_10_costy_brands <- df_new[df_new$price_usd %in% tail(sort(df_new$price_usd),10),]
+top_10_costy_brands
+```
+
+```{r}
+top_10_manufactuerer_avg_price=subset(car_data,manufacturer_name=='Acura'|manufacturer_name=="Buick"|manufacturer_name=="cadillac"|manufacturer_name=="Infiniti"|manufacturer_name=="Jaguar"|manufacturer_name=="Land Rover"| manufacturer_name=='Lexus'| manufacturer_name=="Mini"|manufacturer_name=="Porsche"|manufacturer_name=="Skoda")
+```
+
+**Boxplot - Price(In USD) vs Manufacturer**
+
+```{r results=T}
+plot_body <- ggplot(top_10_manufactuerer_avg_price, aes(x=manufacturer_name, y=price_usd)) + 
+  geom_boxplot(color="black", fill="Yellow")+
+  labs(x="Car_Manufacturer",y="Price(in USD)") + labs(title=" Top 10 Manufacturers and its Car Price") 
+plot_body
+```
+
+### ANOVA Test
+
+In this ANOVA test, we are checking that is there any significant difference in the mean price on the basis of car manufacturer.
+
+H0: there is no difference in the mean prices of the cars based on manufacturer
+
+H1: there is a difference in the mean prices of the cars based on manufacturer
+
+```{r}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov
+```
+
+```{r}
+xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than α hence we reject the null hypothesis.
+
+It means there is a significant difference in the mean price based on manufacturer.
+
+
+**Based on year of Production**
+
+Boxplot - Price(In USD) vs Year of Production
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd)) + labs(x = 'Year of production', y = 'Price(in USD)') + 
+    labs(title ='Year wise car price values')
+```
+
+
+As we can see that car prices of vintage cars is high. Also the resell price is high for latest cars.
+
+```{r results=T}
+plot_transmission <- ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd,linetype = transmission)) + 
+    labs(title = 'Year wise car price values based on transmission type') + labs(x = 'Year of production', y = 'Price(in USD)')
+plot_transmission
+```
+
+To check the Vintage category, mechanical are categorize as vintage and automatic cars are available from 1978. We are getting the similar results compared to the previous plot based on complete data.
+
+### Chi Square Test
+
+With the chi square test of independence, we are checking that resale car prices are dependent on the year of manufacture or not.
+
+H0: Car prices and year of production are independent of each other.
+
+H1: Car prices and year of production are dependent of each other.
+
+
+```{r}
+p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
+year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
+lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
+df <- as.data.frame(do.call(cbind, lists))
+conTable = table(df)
+print(conTable)
+```
+
+```{r}
+head(df,3)
+```
+
+```{r results=T}
+chitest = chisq.test(conTable)
+chitest
+```
+
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than 0.05 hance we are rejecting the null hypothesis.
+
+It means prices and year of production are dependent of each other
