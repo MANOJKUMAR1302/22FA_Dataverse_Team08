@@ -229,3 +229,118 @@ sapply(car_data, function(x) sum(is.na(x)))
 •	The team examined all variables except model_name, engine_has_gas, car_state, Location_region, and Duration List.
 
 
+## Exploratory Data Analysis
+
+This graph shows about the distribution of Resale prices of the entire dataset.
+
+```{r results=T}
+p <- ggplot(car_data, aes(x = price_usd)) +
+     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5) +
+      labs(x = 'price(In USD)') + labs(title = 'Distribution of Resale Prices - Histogram')
+p
+```
+
+## Is the warranty impacting the resale value of the cars?
+  
+**Boxplot: Price(In USD) vs has_warranty**
+
+  ```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=has_warranty, y=price_usd)) + 
+  geom_boxplot(color="black", fill="violet")+
+  labs(x="has_warranty",y="price(in USD)") + labs(title="Boxplot - Car Price distribution based on car is in warranty or not") 
+plot_warranty
+```
+
+As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
+
+Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
+
+### T-test
+
+```{r results = F}
+with_warranty<-subset(car_data,has_warranty == 'True')
+without_warranty<-subset(car_data,has_warranty == 'False')
+mean_price = mean(car_data$price_usd)
+```
+
+```{r results = F}
+head(car_data)
+```
+
+T-test has been performed on has_warranty variable has two sub groups.
+
+H0: Mean price of data is equal to the mean price of two subgroups (With_warranty and Without_warranty)
+
+H1:Mean price of data is not equal to the mean price of two subgroups (With_warranty and Without_warranty)
+
+```{r results = T}
+
+Hypothesis_test_price_with_warranty = t.test(x=with_warranty$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_warranty
+
+
+Hypothesis_test_price_without_warranty = t.test(x=without_warranty$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_warranty
+```
+The mean value of two sub categories has significant difference. Hence we are accepting alternate hypothesis.
+
+## Does the odometer value have any impact on the car prices?
+
+**Line Graph: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(mapping = aes(x = odometer_value, y = price_usd)) +
+    scale_x_continuous(name="odometer_value", labels = scales::comma) +
+        labs(x = 'odometer_value', y = 'price(in USD)') + labs(title = 'Line plot - Prices vs odometer values')
+```
+
+We can clearly see that as odometer value is increasing, car prices are going down.
+
+**Violin Plot: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+plot3 <- ggplot(car_data,aes(x = odometer_value,y = '',color = odometer_value)) +
+        geom_violin(color="black", fill="pink") + geom_boxplot(width = .2,color="black", fill="violet") +
+        labs(x = 'odometer_value') + labs(title = 'Violin Plot + Box Plot for Odometer values')
+plot3
+```
+
+
+Violin plot, checking odometer distribution and box plot in the same graph. 
+
+
+**Scatter plot with fitting line**
+
+```{r}
+updated_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+```
+**Scatter Plot: Price(In USD) vs Odometer Value**
+
+```{r}
+ggplot(updated_data, aes(x=odometer_value, y=price_usd)) +
+   geom_point()+
+   geom_smooth(method=lm) +
+   labs(title = 'scatter plot - car prices vs odometer values') +
+   labs(x = 'odometer values(in KM)', y = 'price(in USD)') + scale_x_continuous(name='odometer values(in KM)', labels = scales::comma)
+```
+
+By removing outliers from odometer value, we are getting good relation for price vs odometer value.
+
+### Correlation Plot
+
+Correlation plot between the numerical features is considered
+
+```{r include=FALSE}
+car_data %>% select_if(is.numeric)->cars_numerical
+```
+
+```{r cor}
+corrplot(cor(cars_numerical), method = 'number')
+```
+
+The above correlation plot shows the relation between all the numerical features and the price_usd.
+
+Here, odometer_value has negative correlation with price(cc=-0.42). 
