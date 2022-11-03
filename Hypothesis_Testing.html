@@ -997,6 +997,45 @@ Hypothesis_test_price_without_feature6</code></pre>
 ## mean of x 
 ##  5321.311</code></pre>
 </div>
+<div id="feature_7" class="section level3">
+<h3>Feature_7</h3>
+<pre class="r"><code>with_feature_7&lt;-subset(car_data,feature_7 == &#39;True&#39;)
+without_feature_7&lt;-subset(car_data,feature_7 == &#39;False&#39;)</code></pre>
+<pre class="r"><code>#mean of GRE score
+mean_price = mean(car_data$price_usd) #Mean GRE based on full data
+mean_price</code></pre>
+<pre><code>## [1] 6639.971</code></pre>
+<pre class="r"><code>#for GRE score of admitted students
+
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature7</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  with_feature_7$price_usd
+## t = 72.56, df = 10161, p-value &lt; 2.2e-16
+## alternative hypothesis: true mean is not equal to 6639.971
+## 95 percent confidence interval:
+##  11849.82 12139.12
+## sample estimates:
+## mean of x 
+##  11994.47</code></pre>
+<pre class="r"><code>Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature7</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  without_feature_7$price_usd
+## t = -68.33, df = 28368, p-value &lt; 2.2e-16
+## alternative hypothesis: true mean is not equal to 6639.971
+## 95 percent confidence interval:
+##  4666.929 4776.967
+## sample estimates:
+## mean of x 
+##  4721.948</code></pre>
+</div>
 </div>
 <div id="anova-test-on-car-brands" class="section level2">
 <h2>Anova test on car brands</h2>
@@ -1410,6 +1449,179 @@ brands.</p>
 <p>As we got p value less than 0.05, we will reject the null hypothesis.
 It means there is a significant difference based in the mean car prices
 based on manufacturer</p>
+</div>
+<div id="anova-test-on-top-10-car-brands" class="section level2">
+<h2>Anova test on top 10 car brands</h2>
+<pre class="r"><code>car_data_top_10 &lt;- car_data[car_data$manufacturer_name %in% c(&quot;Acura&quot;,&quot;Buick&quot;,&quot;Cadillac&quot;,&quot;Infiniti&quot;,&quot;Jaguar&quot;,&quot;Land Rover&quot;,&quot;Lexus&quot;,&quot;Mini&quot;,&quot;Porsche&quot;,&quot;Skoda&quot;),]
+nrow(car_data_top_10)</code></pre>
+<pre><code>## [1] 1986</code></pre>
+<pre class="r"><code>price_aov&lt;-aov(price_usd ~ manufacturer_name, data=car_data_top_10)
+price_aov</code></pre>
+<pre><code>## Call:
+##    aov(formula = price_usd ~ manufacturer_name, data = car_data_top_10)
+## 
+## Terms:
+##                 manufacturer_name    Residuals
+## Sum of Squares         4733742305 181098492678
+## Deg. of Freedom                 9         1976
+## 
+## Residual standard error: 9573.35
+## Estimated effects may be unbalanced</code></pre>
+<pre class="r"><code>xkabledply(price_aov, title = &#39;Anova test result impact of top 10 manufacturer_name on car price&#39;)</code></pre>
+<table class="table table-striped" style="width: auto !important; ">
+<caption>
+Anova test result impact of top 10 manufacturer_name on car price
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Df
+</th>
+<th style="text-align:right;">
+Sum Sq
+</th>
+<th style="text-align:right;">
+Mean Sq
+</th>
+<th style="text-align:right;">
+F value
+</th>
+<th style="text-align:right;">
+Pr(&gt;F)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+manufacturer_name
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+4733742305
+</td>
+<td style="text-align:right;">
+525971367
+</td>
+<td style="text-align:right;">
+5.739
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Residuals
+</td>
+<td style="text-align:right;">
+1976
+</td>
+<td style="text-align:right;">
+181098492678
+</td>
+<td style="text-align:right;">
+91649035
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="anova-test-on-drivetrain" class="section level2">
+<h2>Anova test on Drivetrain</h2>
+<p>Is there any change in the resale price based on drive train
+feature?</p>
+<pre class="r"><code>cartrain_aov&lt;-aov(price_usd ~ drivetrain, data=car_data)
+cartrain_aov</code></pre>
+<pre><code>## Call:
+##    aov(formula = price_usd ~ drivetrain, data = car_data)
+## 
+## Terms:
+##                   drivetrain    Residuals
+## Sum of Squares  3.099833e+11 1.282120e+12
+## Deg. of Freedom            2        38528
+## 
+## Residual standard error: 5768.676
+## Estimated effects may be unbalanced</code></pre>
+<pre class="r"><code>xkabledply(cartrain_aov, title = &#39;Anova test result impact of drivetrain on car prices&#39;)</code></pre>
+<table class="table table-striped" style="width: auto !important; ">
+<caption>
+Anova test result impact of drivetrain on car prices
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Df
+</th>
+<th style="text-align:right;">
+Sum Sq
+</th>
+<th style="text-align:right;">
+Mean Sq
+</th>
+<th style="text-align:right;">
+F value
+</th>
+<th style="text-align:right;">
+Pr(&gt;F)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+drivetrain
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3.099833e+11
+</td>
+<td style="text-align:right;">
+154991669485
+</td>
+<td style="text-align:right;">
+4657.535
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Residuals
+</td>
+<td style="text-align:right;">
+38528
+</td>
+<td style="text-align:right;">
+1.282120e+12
+</td>
+<td style="text-align:right;">
+33277619
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
