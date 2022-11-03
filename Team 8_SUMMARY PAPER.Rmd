@@ -449,3 +449,104 @@ If p≤α, reject H0; otherwise, do not reject H0.
 As we got p value less than 0.05 hance we are rejecting the null hypothesis.
 
 It means prices and year of production are dependent of each other
+
+## Does colour and body type have any impact on the resale prices of the cars?
+
+**Boxplot - Price(In USD) vs Car color**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=color, y=price_usd)) + 
+  geom_boxplot(color="blue", fill="orange")+
+  labs(x="Car Color",y="price_usd") + labs(title="Boxplot - Car Color and its Price (In USD)") 
+plot1
+```
+
+### ANOVA Test
+
+ANOVA is helpful for testing three or more variables.It is similar to multiple two-sample t-tests.The one-way ANOVA is used to determine whether there are any statistically significant differences between the means of three or more independent (unrelated) groups.
+
+The null hypothesis states that the mean resale price in usd is equal among all color groups.
+
+H0 : There is no difference in mean Prices based on color feature
+
+H1 : There is difference in mean Prices based on color feature
+
+Anova test for car color
+
+```{r}
+df_aov_1 = aov(price_usd ~  color , car_data)
+summary(df_aov_1)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of color is different from each other.
+
+
+**Based on Body Type**
+
+**Boxplot - Price(In USD) vs Body Type**
+
+```{r results=T}
+plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#F48FB1")+
+  labs(x="body type",y="price(in USD)") + labs(title="Boxplot - Car Price distribution based on body type") 
+plot_body
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of car body type.
+
+H0 : all means are equal
+
+H1 : not all means are equal
+
+Decide on the significance level
+significance level is α=0.05
+
+```{r}
+df_aov_4 = aov(price_usd ~  body_type , car_data)
+summary(df_aov_4)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject null hypothesis. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+## Does the number of photos have any impact on the car’s resale value?
+
+Creating buckets for number of photos feature
+
+```{r}
+
+Photo_bucket <- within(car_data, {   
+  Photo_bucket.cat <- NA # need to initialize variable
+  Photo_bucket.cat[number_of_photos < 6] <- "0-5"
+  Photo_bucket.cat[number_of_photos >= 6 & number_of_photos < 11] <- "6-10"
+  Photo_bucket.cat[number_of_photos >= 11 & number_of_photos < 16] <- "11-15"
+  Photo_bucket.cat[number_of_photos >= 16 & number_of_photos < 21] <- "16-20"
+  Photo_bucket.cat[number_of_photos >= 21 & number_of_photos < 26] <- "21-25"
+  Photo_bucket.cat[number_of_photos >= 26 & number_of_photos < 31] <- "26-30"
+  Photo_bucket.cat[number_of_photos > 30] <- "more than 30"
+   } )
+
+Photo_bucket$Photo_bucket.cat <- factor(Photo_bucket$Photo_bucket.cat, levels= c("0-5","6-10","11-15","16-20","21-25","26-30","more than 30"))
+
+```
+
+**Boxplot - Price(In USD) vs Number of Photos**
+
+```{r}
+
+ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
+
+```
