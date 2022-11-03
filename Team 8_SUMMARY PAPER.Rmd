@@ -156,4 +156,76 @@ car_data = data.frame(read.csv('cars.csv'))
 str(car_data)
 ```
 
+## Data cleaning
+
+Convert the below variables in the dataset as factor to make them categorical.
+
+•	transmission
+
+•	engine_fuel
+
+•	engine_has_gas
+
+•	engine_type
+
+•	body_type
+
+•	has_warranty
+
+•	state
+
+•	drivetrain
+
+•	is exchangeable
+
+```{r results=T}
+car_data$transmission = as.factor(car_data$transmission)
+car_data$engine_fuel = as.factor(car_data$engine_fuel)
+car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
+car_data$engine_type = as.factor(car_data$engine_type)
+car_data$body_type = as.factor(car_data$body_type)
+car_data$has_warranty = as.factor(car_data$has_warranty)
+car_data$state = as.factor(car_data$state)
+car_data$drivetrain = as.factor(car_data$drivetrain)
+car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
+car_data$location_region = as.factor(car_data$location_region)
+```
+
+Updating the unknown features (Feature 0 to Feature 9) as factor in bulk
+
+```{r results=T}
+feature_cols <- c(20:29)
+car_data[feature_cols] <- lapply(car_data[feature_cols],factor)
+str(car_data)
+```
+
+In the dataset, there are 10 null values present in engine_capacity variable.
+
+```{r results=T}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+```{r}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- 0
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+s <- getmode(car_data$engine_capacity)
+cat("For Engine Capcity Mean is:",mean(car_data$engine_capacity),"Median is:",median(car_data$engine_capacity),"Mode is:",s)
+```
+
+•	The engine capacity variable has 10 null values which have been replaced by the mean as it will not impact the distribution of data.
+
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- mean(car_data$engine_capacity,na.rm = TRUE)
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+
+•	We are not removing the outilers in the odometer variable as some of the vehicles might be in use from longer time.
+
+•	The team examined all variables except model_name, engine_has_gas, car_state, Location_region, and Duration List.
+
 
