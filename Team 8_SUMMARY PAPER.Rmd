@@ -690,8 +690,8 @@ Unknown features(feature0 to feature9)
 Is feature_0 impacting the average car price?
 
 ```{r}
-with_feature_0<-subset(car_data,feature_0 == 'TRUE')
-without_feature_0<-subset(car_data,feature_0 == 'FALSE')
+with_feature_0<-subset(car_data,feature_0 == 'True')
+without_feature_0<-subset(car_data,feature_0 == 'False')
 ```
 
 ```{r}
@@ -721,8 +721,8 @@ We got low price interval if feature0 is in the car. So probably its outdated fe
 Is feature_1 impacting the average car price?
 
 ```{r}
-with_feature_1<-subset(car_data,feature_1 == 'TRUE')
-without_feature_1<-subset(car_data,feature_1 == 'FALSE')
+with_feature_1<-subset(car_data,feature_1 == 'True')
+without_feature_1<-subset(car_data,feature_1 == 'False')
 ```
 
 
@@ -749,8 +749,8 @@ We got low price interval if feature0 is in the car.
 Is feature_2 impacting the average car price?
 
 ```{r}
-with_feature_2<-subset(car_data,feature_2 == 'TRUE')
-without_feature_2<-subset(car_data,feature_2 == 'FALSE')
+with_feature_2<-subset(car_data,feature_2 == 'True')
+without_feature_2<-subset(car_data,feature_2 == 'False')
 ```
 
 
@@ -775,8 +775,8 @@ Hypothesis_test_price_without_feature2
 Is feature_3 impacting the average car price?
 
 ```{r}
-with_feature_3<-subset(car_data,feature_3 == 'TRUE')
-without_feature_3<-subset(car_data,feature_3 == 'FALSE')
+with_feature_3<-subset(car_data,feature_3 == 'True')
+without_feature_3<-subset(car_data,feature_3 == 'False')
 ```
 
 
@@ -801,8 +801,8 @@ Hypothesis_test_price_without_feature3
 Is feature_4 impacting the average car price?
 
 ```{r}
-with_feature_4<-subset(car_data,feature_4 == 'TRUE')
-without_feature_4<-subset(car_data,feature_4 == 'FALSE')
+with_feature_4<-subset(car_data,feature_4 == 'True')
+without_feature_4<-subset(car_data,feature_4 == 'False')
 ```
 
 ```{r results=T}
@@ -826,8 +826,8 @@ Hypothesis_test_price_without_feature4
 Is feature_5 impacting the average car price?
 
 ```{r}
-with_feature_5<-subset(car_data,feature_5 == 'TRUE')
-without_feature_5<-subset(car_data,feature_5 == 'FALSE')
+with_feature_5<-subset(car_data,feature_5 == 'True')
+without_feature_5<-subset(car_data,feature_5 == 'False')
 ```
 
 
@@ -853,8 +853,8 @@ Hypothesis_test_price_without_feature5
 Is feature_6 impacting the average car price?
 
 ```{r}
-with_feature_6<-subset(car_data,feature_6 == 'TRUE')
-without_feature_6<-subset(car_data,feature_6 == 'FALSE')
+with_feature_6<-subset(car_data,feature_6 == 'True')
+without_feature_6<-subset(car_data,feature_6 == 'False')
 ```
 
 
@@ -879,8 +879,8 @@ Hypothesis_test_price_without_feature6
 Is feature_7 impacting the average car price?
 
 ```{r}
-with_feature_7<-subset(car_data,feature_7 == 'TRUE')
-without_feature_7<-subset(car_data,feature_7 == 'FALSE')
+with_feature_7<-subset(car_data,feature_7 == 'True')
+without_feature_7<-subset(car_data,feature_7 == 'False')
 ```
 
 
@@ -905,8 +905,8 @@ Hypothesis_test_price_without_feature7
 Is feature_8 impacting the average car price?
 
 ```{r}
-with_feature_8<-subset(car_data,feature_8 == 'TRUE')
-without_feature_8<-subset(car_data,feature_8 == 'FALSE')
+with_feature_8<-subset(car_data,feature_8 == 'True')
+without_feature_8<-subset(car_data,feature_8 == 'False')
 ```
 
 
@@ -931,8 +931,8 @@ Hypothesis_test_price_without_feature8
 Is feature_9 impacting the average car price?
 
 ```{r}
-with_feature_9<-subset(car_data,feature_9 == 'TRUE')
-without_feature_9<-subset(car_data,feature_9 == 'FALSE')
+with_feature_9<-subset(car_data,feature_9 == 'True')
+without_feature_9<-subset(car_data,feature_9 == 'False')
 ```
 
 
