@@ -550,3 +550,105 @@ Photo_bucket$Photo_bucket.cat <- factor(Photo_bucket$Photo_bucket.cat, levels= c
 ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
 
 ```
+
+## Does drivetrain have any impact on the car’s resale value?
+
+
+**Boxplot - Price(In USD) vs Drivetrain**
+
+```{r results=T}
+plot_warranty <- ggplot(car_data, aes(x=drivetrain, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#AF7AC5")+
+  labs(x="drivetrain",y="price_usd") + labs(title="boxplot - Car Price distribution based on car drivetrain") 
+plot_warranty
+```
+
+### ANOVA Test
+
+H0: No difference in the mean price based on drivetrain.
+
+H1: There is a difference in the mean price based on drivetrain.
+
+```{r results=T}
+cartrain_aov<-aov(price_usd ~ drivetrain, data=car_data)
+cartrain_aov
+
+xkabledply(cartrain_aov, title = 'Anova test result impact of drivetrain on car prices')
+```
+
+The p-value is less than the specified significance level of 0.05; we reject null hypothesis. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+## Are the resale prices of the cars dependent on fuel and engine type? 
+
+**Based on Engine Fuel**
+
+**Boxplot- Price(In USD) vs Engine fuel**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=engine_fuel, y=price_usd)) + 
+  geom_boxplot(color="black", fill="green")+
+  labs(x="engine_fuel",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on engine_fuel") 
+plot1
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine fuel types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3=μ4=μ5=μ6
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+```{r}
+df_aov_2 = aov(price_usd~  engine_fuel , car_data)
+summary(df_aov_2)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine fuel type is different from each other.
+
+**Based on Engine Type**
+
+*Density plot _ Price(In USD) vs Engine Type**
+
+```{r results=T}
+library(ggpubr)
+xplot <- ggdensity(car_data, "price_usd", fill = "engine_type",
+                   palette = "arc") + labs(title = 'density plot for car price based on engine type category') + labs(x = 'price(in USD)')
+xplot
+```
+
+We can clearly separate out electric engine category from diesel and gasoline. most of the distribution is overlapped for diesel and gasoline and we can see the Pareto distribution in both the categories.
+
+### ANOVA TEST
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+Significance level is alpha=0.05
+
+```{r}
+df_aov_3 = aov(price_usd~  engine_type , car_data)
+summary(df_aov_3)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
