@@ -136,5 +136,24 @@ Data Verse team members are avid vehicle enthusiasts, therefore we used their kn
 9)	Does unknown features have any impact on car prices?
 
 
+## Importing the Libraries and Dataset
+
+```{r Importing Libraries, include=FALSE}
+# Required libraries are installed
+library(ezids)
+library(plotly)
+library(viridis)
+library(hrbrthemes)
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+```
+
+We have imported the data from cars.csv file and stored it as car_data dataframe.
+
+```{r results=T}
+car_data = data.frame(read.csv('cars.csv'))
+str(car_data)
+```
 
 
