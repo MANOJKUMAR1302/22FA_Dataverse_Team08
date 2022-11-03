@@ -289,6 +289,26 @@ Hypothesis_test_price_without_feature8 = t.test(x=without_feature_8$price_usd,mu
 Hypothesis_test_price_without_feature8
 ```
 
+###feature-9
+```{r}
+with_feature_9<-subset(car_data,feature_9 == 'True')
+without_feature_9<-subset(car_data,feature_9 == 'False')
+```
+
+```{r results=T}
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+Hypothesis_test_price_with_feature9 = t.test(x=with_feature_9$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature9
+
+
+Hypothesis_test_price_without_feature9 = t.test(x=without_feature_9$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature9
+```
+
 ## Anova test on car brands
 
 All car brands have same average car price or not?
