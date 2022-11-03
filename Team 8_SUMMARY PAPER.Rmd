@@ -847,3 +847,127 @@ Hypothesis_test_price_without_feature5 = t.test(x=without_feature_5$price_usd,mu
 Hypothesis_test_price_without_feature5
 ```
 
+
+### T-test on Feature 6
+
+Is feature_6 impacting the average car price?
+
+```{r}
+with_feature_6<-subset(car_data,feature_6 == 'TRUE')
+without_feature_6<-subset(car_data,feature_6 == 'FALSE')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature6 = t.test(x=with_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature6
+
+
+Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature6
+```
+
+### T-test on Feature 7
+
+Is feature_7 impacting the average car price?
+
+```{r}
+with_feature_7<-subset(car_data,feature_7 == 'TRUE')
+without_feature_7<-subset(car_data,feature_7 == 'FALSE')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature7
+
+
+Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature7
+```
+
+### T-test on Feature 8
+
+Is feature_8 impacting the average car price?
+
+```{r}
+with_feature_8<-subset(car_data,feature_8 == 'TRUE')
+without_feature_8<-subset(car_data,feature_8 == 'FALSE')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature8 = t.test(x=with_feature_8$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature8
+
+
+Hypothesis_test_price_without_feature8 = t.test(x=without_feature_8$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature8
+```
+
+### T-test on Feature 9
+
+Is feature_9 impacting the average car price?
+
+```{r}
+with_feature_9<-subset(car_data,feature_9 == 'TRUE')
+without_feature_9<-subset(car_data,feature_9 == 'FALSE')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature9 = t.test(x=with_feature_9$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature9
+
+
+Hypothesis_test_price_without_feature9 = t.test(x=without_feature_9$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature9
+```
+In this dataset, we have 10 unknown features, and we are not aware that which part of the car these features are representing.
+So, to test the impact, we designed the t-test for all the features.
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown features.
+H1: There is a difference in the mean price of the cars and the mean price based on unknown features.
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown feature category.
+
+## Did SMART Questions changed after EDA?
+
+•	Dataset only have data from six locations, the team did not use the Location variable.
+
+•	The team decided to include an analysis of unknown features because these features have a significant impact on the car's price.
+
+## Conclusion
+
+After Performing Exploratory Data Analysis and Hypothesis testing between dependent variable (price) and several independent variables, we have come to the conclusion that the variables warranty, odometer, manufacturer, year of production, color, body type, drivetrain, number of photos, fuel type, engine type, transmission type, engine capacity have an affect on price of the car.
+
+Unknown features have some impact on car prices. We confirmed the same with the T-test and we decided to include some highly correlated features by applying feature engineering techniques.
+
