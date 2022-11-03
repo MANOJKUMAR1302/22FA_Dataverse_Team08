@@ -67,6 +67,15 @@ str(car_data)
 
 Updating the unknown features as factor in bulk
 
+
+Dropping columns which are not relevant
+
+```{r results=T}
+car_data <- subset(car_data, select = -c(model_name,engine_has_gas,state,location_region))
+```
+
+checking NA values
+
 ```{r results=T}
 sapply(car_data, function(x) sum(is.na(x)))
 ```
@@ -173,6 +182,7 @@ plot_transmission
 To check the Vintage category, mechanical are categorize as vintage and automatic cars are available from 1978. We are getting the similar results compared to the previous plot based on complete data.
 
 ## Engine fuel
+
 ```{r results=T}
 plot1 <- ggplot(car_data, aes(x=engine_fuel, y=price_usd)) + 
   geom_boxplot(color="black", fill="green")+
@@ -181,7 +191,7 @@ plot1
 ```
 
 
-## car prices based on engine cost
+## car prices based on engine type
 
 ```{r results=T}
 library(ggpubr)
@@ -220,6 +230,8 @@ plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) +
   labs(x="body type",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on body type") 
 plot_body
 ```
+
+## car manufacturer
 
 ```{r results=T}
 df_new <- aggregate( price_usd ~ manufacturer_name, car_data, median )
@@ -264,7 +276,7 @@ plot_warranty
 As we can see, cars which are in warranty have the better resell prices than the cars which are not covered under warranty.
 Also we can see so many outliers in 'no warranty' categories. That pool is belongs to the vintage cars where prices are high but the car is not in the warranty.
 
-## 
+## Number of upgrades
 
 ```{r result=T}
 plot_upgrade <- ggplot(car_data, aes(x=up_counter, y=price_usd)) + 
