@@ -247,12 +247,13 @@ Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu
 Hypothesis_test_price_without_feature6
 ```
 
-### Feature 8
+### Feature_7
 
 ```{r}
-with_feature_8<-subset(car_data,feature_8 == 'True')
-without_feature_8<-subset(car_data,feature_8 == 'False')
+with_feature_7<-subset(car_data,feature_7 == 'True')
+without_feature_7<-subset(car_data,feature_7 == 'False')
 ```
+
 
 ```{r results=T}
 #mean of GRE score
@@ -260,16 +261,17 @@ mean_price = mean(car_data$price_usd) #Mean GRE based on full data
 mean_price
 #for GRE score of admitted students
 
-Hypothesis_test_price_with_feature8 = t.test(x=with_feature_8$price_usd,mu = mean_price ,conf.level = 0.95)
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
 #default conf.level = 0.95
-Hypothesis_test_price_with_feature8
+Hypothesis_test_price_with_feature7
 
 
-Hypothesis_test_price_without_feature8 = t.test(x=without_feature_8$price_usd,mu = mean_price ,conf.level = 0.95)
+Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
 #default conf.level = 0.95
-Hypothesis_test_price_without_feature8
-
+Hypothesis_test_price_without_feature7
 ```
+
+
 
 ## Anova test on car brands
 
