@@ -1,0 +1,98 @@
+---
+title: "Used Car Price Prediction - Mid Term Summary Paper"
+author: "Team Dataverse"
+date: "`r Sys.Date()`"
+# date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    highlight: pygments
+---
+
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+---
+
+
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+knitr::opts_chunk$set(warning = F, results = "markup", message = F, comment = NA)
+# knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+## Why Used Car Price Prediction?
+A microchip shortage caused by the COVID-19 pandemic has had a significant impact on the global automobile industry, raising used car prices for buyers.
+
+Automobile manufacturers are unable to produce new vehicles due to raw material supply chain issues. Due to a lower-than-usual supply of vehicles on their lots, dealers selling new cars have struggled to keep up with demand. This has an impact on used car dealerships, who are charging higher prices to sell their vehicles. Customers who want to sell their vehicle to a used car dealership, on the other hand, will benefit from higher trade-in values.
+
+Price variations are common and can lead to misleading prices on any other website, necessitating the development of a tool to predict the pricing of used cars based on real data gathered from local websites in order to provide consumers with an accurate evaluation of cars.
+
+When Team Dataverse learned about the recent issue that arose in the automobile industry as a result of the COVID global pandemic, we attempted to determine which car attributes are most important in determining the price of a used car. Our analysis will be accurate enough to assist consumers in determining car pricing for either selling or purchasing purposes based on the vehicle's features.
+
+
+## Prior Research and Analysis
+With the rise of individual cars, more people are looking into getting their own car at an affordable price, usually looking in the used car market, "For each and every new car sold in the UAE in 2019, about 3.5 used cars were sold" (BIELSKI & RAMARATHNAM, 2020). In the coming years, the industry will be revolutionized, with markets powered by digitalization and new business models to improve focus efficiency and consumer needs.
+
+In recent years, used car prices have risen. Prices increased by 4-10% between 2018 and 2020, but dealers sold more cars in a shorter period of time. Furthermore, analysts have shown that car depreciation costs have only been decreasing in the UAE, a previously unseen phenomenon that has led to an increase in second-hand car demand (Bridge, 2020).
+
+Manheim The used vehicle index has seen an unprecedented increase in used car value, increasing 6.81% in the first 15 days of April 2021 compared to the month of March. In addition, the value has increased by 52.2% since April 2020, with the latest trend indicators indicating a few more weeks of appreciation. This is due to stimulus payments and tax refunds as a result of the Covid-19 ramifications, as well as a global decrease in car production. (2021 Used Vehicle Value Index).
+
+
+## About the Dataset
+
+The Used-Cars-Catalog data set was obtained from Kaggle (the World's Largest Data Scientists Community) in order to investigate the used car market. Data is pulled in Belarus (western Europe) on December 2, 2019. 
+
+**Dataset Link:**
+https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog?selectcars.csv=
+
+•	The dataset contains 38531 observations.
+
+•	The dataset contains 30 variables.
+
+**Dataset Variables:**
+
+•	[1-5] Manufacturer Name, Model Name, Transmission, Color, Odometer Value
+
+•	[6-10] Year Produced, Engine Fuel, Engine Has Gas, Engine Type, Engine Capacity
+
+•	[11-15] Body Type, Warranty, State, Drivetrain, Price in USD
+
+•	[16-20] Is Exchangeable, Location, Number of Photos, Upgrade Count, Duration Listed 
+
+•	[21-30] Feature 0 to Feature 9
+
+•	The engine capacity variable has ten null values that have been replaced by the mean because they have no effect on the data distribution.
+
+•	Our team used exploratory data analysis and hypothesis testing to estimate the relationship between the dependent variable (Car's price), and several independent variables that included both numerical and categorical values.
+
+
