@@ -115,6 +115,22 @@ new_df <- updated_df
 str(new_df)
 ```
 
+### Feature Selection Methods
+
+## Boruta Method
+
+```{r}
+# Applying the Boruta Method for the cars Dataset
+bo <- Boruta(price_usd~.,data = new_df, doTrace = 2)
+print(bo)
+```
+
+```{r}
+# Plotting a boxplot for all the features according to it's importance
+plot(bo,las = 2, cex.axis = 0.7)
+```
+
+
 ## Feature selction using step wise regression method
 We are using step-wise selection stategy
 
