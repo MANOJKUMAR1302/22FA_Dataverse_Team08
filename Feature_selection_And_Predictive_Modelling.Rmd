@@ -1,0 +1,118 @@
+---
+title: "Feature selection - Prediction of resale car prices - Final porject"
+author: "Yashwant Bhaidkar, Manojkumar Yerraguntla, Lakshmi Sravya Chalapati , Sai Charith Govardhanam"
+date: "2022-11-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ezids)
+library("dplyr")
+library("plyr")
+library(Boruta)
+library(randomForest)
+```
+
+## Loading dataset
+
+```{r results = T}
+df = read.csv('cars.csv')
+summary(df)
+ncol(df)
+```
+
+
+
+## Checking null values and imputation
+```{r , echo=FALSE}
+apply(is.na(df),2,sum)
+```
+
+
+```{r}
+
+df$engine_capacity[is.na(df$engine_capacity)]<-mean(df$engine_capacity,na.rm=TRUE)
+apply(is.na(df),2,sum)
+```
+
+
+## converting categorical variable into factor
+
+```{r}
+new_df <- subset(df, select = -c(model_name,location_region))
+new_df$transmission <-factor(new_df$transmission)
+new_df$drivetrain <-factor(new_df$drivetrain)
+new_df$manufacturer_name <- factor(new_df$manufacturer_name)
+new_df$color <-factor(new_df$color)
+new_df$engine_fuel <-factor(new_df$engine_fuel)
+new_df$engine_type <-factor(new_df$engine_type)
+new_df$engine_has_gas<-factor(new_df$engine_has_gas)
+new_df$body_type <-factor(new_df$body_type)
+new_df$has_warranty <-factor(new_df$has_warranty)
+new_df$state <-factor(new_df$state)
+new_df$drivetrain <-factor(new_df$drivetrain)
+new_df$is_exchangeable<- factor(new_df$is_exchangeable)
+names(new_df)[names(new_df) == "year_produced"] <- "Production_year"
+```
+
+
+
+```{r}
+#applying 
+feature_cols <- c(18:27)
+new_df[feature_cols] <- (lapply(new_df[feature_cols],factor))
+str(new_df)
+```
+
+
+
+```{r}
+str(new_df)
+```
+
+
+```{r}
+str(new_df)
+```
+
+
+```{r}
+#In case of car brands, we have 55 different brands, so replacing them with median prices of the car.
+avg_prices <-aggregate(new_df$price_usd, list(new_df$manufacturer_name), FUN=median)
+colnames(avg_prices) <- c('manufacturer_name','average_brand_price')
+avg_prices
+```
+
+
+```{r}
+avg_prices$price_categories <- ifelse(avg_prices$average_brand_price <= 5000, 1, 
+                   ifelse(avg_prices$average_brand_price <= 10000, 2, 
+                       ifelse(avg_prices$average_brand_price <= 15000, 3, 
+                            ifelse(avg_prices$average_brand_price <= 20000, 4, 5))))
+
+avg_prices
+```
+
+
+
+```{r}
+updated_df <- merge(new_df,avg_prices)
+updated_df$price_categories <- factor(updated_df$price_categories)
+str(updated_df)
+```
+
+
+
+```{r}
+#scaling numerical features
+updated_df <- rapply(updated_df,scale,c("numeric","integer"),how="replace")
+str(updated_df)
+```
+
+```{r}
+new_df <- updated_df
+str(new_df)
+```
+
+
