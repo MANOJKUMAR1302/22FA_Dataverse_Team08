@@ -273,3 +273,41 @@ final <- rbind(mod_train,mod_test)
 final
 ```
 
+```{r}
+library(caret)
+index <- createDataPartition(updated_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(updated_df)
+
+train_df <- updated_df[index,]
+test_df <- updated_df[-index,]
+```
+
+```{r}
+#######################Lasso regression##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_lasso  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = updated_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 1,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_lasso$bestTune
+```
+
+```{r}
+round(coef(model_lasso$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_lasso,newdata = train_df)
+mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_train
+```
