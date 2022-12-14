@@ -754,6 +754,70 @@ new_df <- updated_df
 str(updated_df)
 ```
 
+## Feature Selection Methods
+
+Feature Selection is the method of reducing the input variable to your model by using only relevant data and consistent features getting rid of noise in data. 
+
+Based on type of problem, this feature selection method will select the relevant features for your machine learning model.
+
+**Three key benefits of performing feature selection on your data are:**
+
+**Reduces Overfitting:** Less redundant data means less opportunity to make decisions based on noise. 
+
+**Improves Accuracy:** Less misleading data means modeling accuracy improves and prediction power of the algorithms increases.
+
+**Reduces Training Time:** Less data means that algorithms train faster.
+
+## Boruta Method
+
+Boruta algorithm is a wrapper built around the random forest classification algorithm. It makes an effort to include all significant, relevant aspects that could be present in your dataset with regard to an outcome variable.
+
+**What is Wrapper Method?**
+
+In wrapper methods, it uses a subset of features and train a model using them. Based on the inferences drawn from the previous model; it will add or remove features from the subset. Forward Selection, Backward elimination are some of the examples for wrapper methods.
+
+**Why Boruta method?**
+
+This method shows the graphical representation of important features required for our modeling in terms of boxplot and it's very easy to understand the imporatnt feature with the help of visualization.
+
+This method actually creates the shadow features each original feature. If the z-score of the original features is greater than the highest MDI Score of all the shadow features it stores the values as hit in the vector. If the number of hits are more it will be considered as the important feature.
+
+**What is the Boruta method's procedure?**
+
+•	The dataset is first duplicated, and each column's values are then randomly shuffled. These values are called shadow features.  After that, it uses the dataset to train a classifier, such as a Random Forest Classifier. 
+
+•	After running the method, it uses the Mean Decrease Accuracy or Mean Decrease Impurity to estimate the relative importance of each feature in the data set. The feature is considered as better or more significant if its value is high.
+
+•	The algorithm then determines whether any of the genuine features have a greater priority. That is, if the feature has a better Z-score than the highest Z-score of its shadow features than the best of the shadow features. A Z-score is the number of standard deviations from the mean a data point.
+
+•	If they do, a vector is created to capture this. They are referred to as hits. It will then proceed with a subsequent iteration. You will have a table of these hits at the conclusion of a certain number of repetitions.
+
+•	At each iteration, the algorithm compares the Z-scores of the shuffled copies of the features with the original features to check if the latter performed better than the former. If it does, the algorithm will designate the characteristic as significant.
+
+•	Essentially, the method attempts to prove the significance of the feature by comparing it to random shuffled copies, which increases robustness. This is accomplished by comparing the number of times a feature outperformed the shadow features using a binomial distribution.
+
+•	If a feature isn't recorded as a hit after, say, 15 iterations, you reject it and remove it from the original matrix. After a set number of iterations -or if all the features have been either confirmed or rejected- you stop.
+
+Now we compare the relevance of each original attribute to a threshold. This time, the threshold is specified as the feature with the highest feature relevance among the shadow features. A "hit" occurs when the relevance of a characteristic exceeds this level. The premise is that a feature is only helpful if it can outperform the best randomized feature.
+
+## Boruta Method: Results
+
+The code below is for the Boruta technique, with price_usd as the dependant variable and new df as our dataset.
+
+```{r}
+# Applying the Boruta Method for the cars Dataset
+bo <- Boruta(price_usd~.,data = new_df, doTrace = 2)
+print(bo)
+```
+According to the Boruta method result, it ran 12 iterations in 6 minutes and shown that 27 attributes are relevant, and we choose the top consistent features to develop our modeling.
+
+
+```{r}
+# Plotting a boxplot for all the features according to it's importance
+plot(bo,las = 2, cex.axis = 0.7)
+```
+
+According to the output graph, the most relevant attribute is production year, followed by engine capacity, drivetrain, and so on.
 
 
 ## DATA Splitting before Modeling
