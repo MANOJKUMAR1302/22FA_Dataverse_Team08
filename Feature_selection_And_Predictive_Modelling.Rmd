@@ -227,3 +227,49 @@ ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
 # feature_3
 # feature_5
 ```
+
+### Predictive Modeling
+
+```{r}
+# The Predictive Models used in this project are:
+# 1. Linear Regression
+# 2. Lasso and Ridge Regression
+# 3. SVM Regression
+# 4. Random Forest Regression
+# 5. XG Boost
+
+```
+
+## Linear regression
+
+```{r}
+#######regression model
+model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+summary(model_linear_regression)
+```
+
+
+
+```{r}
+prediction_reg <- predict(model_linear_regression,newdata = train_df)
+mod_train <- data.frame(Dataset_used = 'Train',RMSE = RMSE(prediction_reg,train_df$price_usd),Rsquared = R2(prediction_reg,train_df$price_usd))
+mod_train
+```
+
+
+
+```{r}
+prediction_reg <- predict(model_linear_regression,newdata = test_df)
+mod_test <- data.frame(Dataset_used = 'test',RMSE = RMSE(prediction_reg,test_df$price_usd),Rsquared = R2(prediction_reg,test_df$price_usd))
+mod_test
+```
+
+
+```{r}
+final <- rbind(mod_train,mod_test)
+final
+```
+
