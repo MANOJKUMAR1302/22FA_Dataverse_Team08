@@ -1,5 +1,5 @@
 ---
-title: "Feature selection - Prediction of resale car prices - Final porject"
+title: "Feature selection - Prediction of resale car prices - Final project"
 author: "Yashwant Bhaidkar, Manojkumar Yerraguntla, Lakshmi Sravya Chalapati , Sai Charith Govardhanam"
 date: "2022-11-30"
 output: html_document
@@ -354,3 +354,53 @@ mod_testr <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd
 new_df1<-rbind(mod_trainr,mod_testr)
 print(new_df1)
 ```
+
+
+## Random Forest regressor
+
+```{r}
+###RF model
+model_rf <- randomForest(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + average_brand_price,data = train_df,ntree=200, importance=TRUE,do.trace = TRUE)
+print(model_rf)
+```
+
+
+```{r}
+print(model_rf)
+```
+
+
+```{r}
+predYrf <- predict(model_rf, train_df)
+
+```
+
+```{r}
+mod_train <- data.frame(RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+mod_train
+```
+
+
+
+
+```{r}
+predYrf <- predict(model_rf, test_df)
+```
+
+```{r}
+mod_test <- data.frame(RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+mod_test
+```
+
+```{r}
+final_df <- rbind(mod_train,mod_test)
+final_df
+```
+
+
+
+
+
