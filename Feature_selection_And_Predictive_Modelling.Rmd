@@ -261,7 +261,7 @@ head(train_df,5)
 ## 1. Linear regression
 
 ```{r}
-#######regression model
+#######################Linear regression##################################
 model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
     engine_capacity + body_type + drivetrain + state + number_of_photos +
     feature_7 + feature_3 + feature_6 + feature_5 +
