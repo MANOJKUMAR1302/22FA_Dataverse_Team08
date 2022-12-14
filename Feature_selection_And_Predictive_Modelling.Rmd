@@ -1,5 +1,5 @@
 ---
-title: "Feature selection - Prediction of resale car prices - Final project"
+title: "Feature selection - Prediction of resale car prices - Final project."
 author: "Yashwant Bhaidkar, Manojkumar Yerraguntla, Lakshmi Sravya Chalapati , Sai Charith Govardhanam"
 date: "2022-11-30"
 output: html_document
