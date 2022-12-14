@@ -311,3 +311,46 @@ prediction1 <- predict(model_lasso,newdata = train_df)
 mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
 mod_train
 ```
+```{r}
+prediction1 <- predict(model_lasso,newdata = test_df)
+mod_test <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared = R2(prediction1,test_df$price_usd))
+new_df_l<-rbind(mod_train,mod_test)
+print(new_df_l)
+
+```
+
+
+```{r}
+####################### Ridge regression ##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_ridge  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = updated_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 0,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_ridge$bestTune
+```
+
+```{r}
+round(coef(model_ridge$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = train_df)
+mod_trainr <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_trainr
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = test_df)
+mod_testr <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared =R2(prediction1,test_df$price_usd))
+new_df1<-rbind(mod_trainr,mod_testr)
+print(new_df1)
+```
