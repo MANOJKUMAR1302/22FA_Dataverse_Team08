@@ -1,0 +1,785 @@
+---
+title: "Used Car Price Prediction - Final Summary Paper"
+author: "Team Dataverse - Yashwant Bhaidkar, Lakshmi Sravya Chalapati,Manojkumar Yerraguntla,Sai Charith Govardhanam"
+date: "`r Sys.Date()`"
+# date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    highlight: pygments
+---
+
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+---
+
+
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+knitr::opts_chunk$set(warning = F, results = "markup", message = F, comment = NA)
+# knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+## Why Used Car Price Prediction?
+A microchip shortage caused by the COVID-19 pandemic has had a significant impact on the global automobile industry, raising used car prices for buyers.
+
+Automobile manufacturers are unable to produce new vehicles due to raw material supply chain issues. Due to a lower-than-usual supply of vehicles on their lots, dealers selling new cars have struggled to keep up with demand. This has an impact on used car dealerships, who are charging higher prices to sell their vehicles. Customers who want to sell their vehicle to a used car dealership, on the other hand, will benefit from higher trade-in values.
+
+Price variations are common and can lead to misleading prices on any other website, necessitating the development of a tool to predict the pricing of used cars based on real data gathered from local websites in order to provide consumers with an accurate evaluation of cars.
+
+When Team Dataverse learned about the recent issue that arose in the automobile industry as a result of the COVID global pandemic, we attempted to determine which car attributes are most important in determining the price of a used car. Our analysis will be accurate enough to assist consumers in determining car pricing for either selling or purchasing purposes based on the vehicle's features.
+
+
+## Prior Research and Analysis
+With the rise of individual cars, more people are looking into getting their own car at an affordable price, usually looking in the used car market, "For each and every new car sold in the UAE in 2019, about 3.5 used cars were sold" (BIELSKI & RAMARATHNAM, 2020). In the coming years, the industry will be revolutionized, with markets powered by digitalization and new business models to improve focus efficiency and consumer needs.
+
+In recent years, used car prices have risen. Prices increased by 4-10% between 2018 and 2020, but dealers sold more cars in a shorter period of time. Furthermore, analysts have shown that car depreciation costs have only been decreasing in the UAE, a previously unseen phenomenon that has led to an increase in second-hand car demand (Bridge, 2020).
+
+Manheim The used vehicle index has seen an unprecedented increase in used car value, increasing 6.81% in the first 15 days of April 2021 compared to the month of March. In addition, the value has increased by 52.2% since April 2020, with the latest trend indicators indicating a few more weeks of appreciation. This is due to stimulus payments and tax refunds as a result of the Covid-19 ramifications, as well as a global decrease in car production. (2021 Used Vehicle Value Index).
+
+
+## About the Dataset
+
+The Used-Cars-Catalog data set was obtained from Kaggle (the World's Largest Data Scientists Community) in order to investigate the used car market. Data is pulled in Belarus (western Europe) on December 2, 2019. 
+
+**Dataset Link:**
+https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog?selectcars.csv=
+
+•	The dataset contains 38531 observations.
+
+•	The dataset contains 30 variables.
+
+**Dataset Variables:**
+
+•	[1-5] Manufacturer Name, Model Name, Transmission, Color, Odometer Value
+
+•	[6-10] Year Produced, Engine Fuel, Engine Has Gas, Engine Type, Engine Capacity
+
+•	[11-15] Body Type, Warranty, State, Drivetrain, Price in USD
+
+•	[16-20] Is Exchangeable, Location, Number of Photos, Upgrade Count, Duration Listed 
+
+•	[21-30] Feature 0 to Feature 9
+
+•	The engine capacity variable has ten null values that have been replaced by the mean because they have no effect on the data distribution.
+
+•	Our team used exploratory data analysis and hypothesis testing to estimate the relationship between the dependent variable (Car's price), and several independent variables that included both numerical and categorical values.
+
+## Limitations of Dataset
+•  We have the data only till 2019. So, we don’t know the post covid trends and the changes in the prices couldn’t be explained.
+
+•  The dataset has data only related to the Belarus region. There is no global exposure.
+
+•  More data can lead to predictions that are more reliable. 
+
+•  Second, there might be additional traits that are reliable predictors. 
+
+•  Here are some examples of variables that could enhance the model: doors, gas mileage (mpg), time spent undergoing mechanical and cosmetic repairs, used-to-new ratio, and appraisal-to-trade ratio.
+
+• There are ten unknown features (0-9) in the dataset. We don't know which part of the car these unknown features represent. Based on the results, we can conclude whether the feature is outdated or a luxury car feature.
+
+## SMART Questions for EDA:
+
+**Why team came up with the below smart Questions?**
+
+Data Verse team members are avid vehicle enthusiasts, therefore we used their knowledge of the most prevalent and crucial aspects to come up with SMART questions. In order to arrive at a conclusion on the target variable price, a few questions were posed, and analysis was conducted utilizing Boxplots, Scatterplots, t-tests, anova, and chi-square tests, among other tools.
+
+
+**What are the factors affecting the prices of used cars?**
+
+1)	Are the car prices dependent on the year of production or number of photos?
+
+2)	Does colour and body type have any impact on the resale prices of the cars?
+
+3)	Does the odometer value have any impact on the car prices?
+
+4)	Are the resale prices of the cars dependent on fuel and engine type?
+
+5)	Does unknown features have any impact on car prices?
+
+
+
+
+
+## Importing the Libraries and Dataset
+
+```{r Importing Libraries, include=FALSE}
+# Required libraries are installed
+library(ezids)
+library(plotly)
+library(viridis)
+library(hrbrthemes)
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+
+#########################################################################add library
+
+
+```
+
+We have imported the data from cars.csv file and stored it as car_data dataframe.
+
+```{r results=T}
+car_data = data.frame(read.csv('cars.csv'))
+str(car_data)
+```
+
+## Data cleaning
+
+Convert the below variables in the dataset as factor to make them categorical.
+
+•	transmission
+
+•	engine_fuel
+
+•	engine_has_gas
+
+•	engine_type
+
+•	body_type
+
+•	has_warranty
+
+•	state
+
+•	drivetrain
+
+•	is exchangeable
+
+```{r results=T}
+car_data$transmission = as.factor(car_data$transmission)
+car_data$engine_fuel = as.factor(car_data$engine_fuel)
+car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
+car_data$engine_type = as.factor(car_data$engine_type)
+car_data$body_type = as.factor(car_data$body_type)
+car_data$has_warranty = as.factor(car_data$has_warranty)
+car_data$state = as.factor(car_data$state)
+car_data$drivetrain = as.factor(car_data$drivetrain)
+car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
+car_data$location_region = as.factor(car_data$location_region)
+```
+
+Updating the unknown features (Feature 0 to Feature 9) as factor in bulk
+
+```{r results=T}
+feature_cols <- c(20:29)
+car_data[feature_cols] <- lapply(car_data[feature_cols],factor)
+str(car_data)
+```
+
+In the dataset, there are 10 null values present in engine_capacity variable.
+
+```{r results=T}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+```{r}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- 0
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+s <- getmode(car_data$engine_capacity)
+cat("For Engine Capcity Mean is:",mean(car_data$engine_capacity),"Median is:",median(car_data$engine_capacity),"Mode is:",s)
+```
+
+•	The engine capacity variable has 10 null values which have been replaced by the mean as it will not impact the distribution of data.
+
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- mean(car_data$engine_capacity,na.rm = TRUE)
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+
+•	We are not removing the outilers in the odometer variable as some of the vehicles might be in use from longer time.
+
+•	The team examined all variables except model_name, engine_has_gas, car_state, Location_region, and Duration List.
+
+
+## Exploratory Data Analysis
+
+This graph shows about the distribution of Resale prices of the entire dataset.
+
+```{r results=T}
+p <- ggplot(car_data, aes(x = price_usd)) +
+     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5) +
+      labs(x = 'price(In USD)') + labs(title = 'Distribution of Resale Prices - Histogram')
+p
+```
+
+
+## 1.Are the car prices dependent on the year of production or number of photos?
+
+
+**Based on year of Production**
+
+Boxplot - Price(In USD) vs Year of Production
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd)) + labs(x = 'Year of production', y = 'Price(in USD)') + 
+    labs(title ='Year wise car price values')
+```
+
+
+As we can see that car prices of vintage cars is high. Also the resell price is high for latest cars.
+
+```{r results=T}
+plot_transmission <- ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd,linetype = transmission)) + 
+    labs(title = 'Year wise car price values based on transmission type') + labs(x = 'Year of production', y = 'Price(in USD)')
+plot_transmission
+```
+
+To check the Vintage category, mechanical are categorize as vintage and automatic cars are available from 1978. We are getting the similar results compared to the previous plot based on complete data.
+
+### Chi Square Test
+
+With the chi square test of independence, we are checking that resale car prices are dependent on the year of manufacture or not.
+
+H0: Car prices and year of production are independent of each other.
+
+H1: Car prices and year of production are dependent of each other.
+
+
+```{r}
+p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
+year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
+lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
+df <- as.data.frame(do.call(cbind, lists))
+conTable = table(df)
+print(conTable)
+```
+
+```{r}
+head(df,3)
+```
+
+```{r results=T}
+chitest = chisq.test(conTable)
+chitest
+```
+
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than 0.05 hance we are rejecting the null hypothesis.
+
+It means prices and year of production are dependent of each other
+
+
+
+**Based on number of photos**
+
+
+Creating buckets for number of photos feature
+
+```{r}
+
+Photo_bucket <- within(car_data, {   
+  Photo_bucket.cat <- NA # need to initialize variable
+  Photo_bucket.cat[number_of_photos < 6] <- "0-5"
+  Photo_bucket.cat[number_of_photos >= 6 & number_of_photos < 11] <- "6-10"
+  Photo_bucket.cat[number_of_photos >= 11 & number_of_photos < 16] <- "11-15"
+  Photo_bucket.cat[number_of_photos >= 16 & number_of_photos < 21] <- "16-20"
+  Photo_bucket.cat[number_of_photos >= 21 & number_of_photos < 26] <- "21-25"
+  Photo_bucket.cat[number_of_photos >= 26 & number_of_photos < 31] <- "26-30"
+  Photo_bucket.cat[number_of_photos > 30] <- "more than 30"
+   } )
+
+Photo_bucket$Photo_bucket.cat <- factor(Photo_bucket$Photo_bucket.cat, levels= c("0-5","6-10","11-15","16-20","21-25","26-30","more than 30"))
+
+```
+
+**Boxplot - Price(In USD) vs Number of Photos**
+
+```{r}
+
+ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
+
+```
+
+
+
+## 2.Does colour and body type have any impact on the resale prices of the cars?
+
+**Boxplot - Price(In USD) vs Car color**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=color, y=price_usd)) + 
+  geom_boxplot(color="blue", fill="orange")+
+  labs(x="Car Color",y="price_usd") + labs(title="Boxplot - Car Color and its Price (In USD)") 
+plot1
+```
+
+### ANOVA Test
+
+ANOVA is helpful for testing three or more variables.It is similar to multiple two-sample t-tests.The one-way ANOVA is used to determine whether there are any statistically significant differences between the means of three or more independent (unrelated) groups.
+
+The null hypothesis states that the mean resale price in usd is equal among all color groups.
+
+H0 : There is no difference in mean Prices based on color feature
+
+H1 : There is difference in mean Prices based on color feature
+
+Anova test for car color
+
+```{r}
+df_aov_1 = aov(price_usd ~  color , car_data)
+summary(df_aov_1)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of color is different from each other.
+
+
+**Based on Body Type**
+
+**Boxplot - Price(In USD) vs Body Type**
+
+```{r results=T}
+plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#F48FB1")+
+  labs(x="body type",y="price(in USD)") + labs(title="Boxplot - Car Price distribution based on body type") 
+plot_body
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of car body type.
+
+H0 : all means are equal
+
+H1 : not all means are equal
+
+Decide on the significance level
+significance level is α=0.05
+
+```{r}
+df_aov_4 = aov(price_usd ~  body_type , car_data)
+summary(df_aov_4)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject null hypothesis. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+
+
+
+## 3.Does the odometer value have any impact on the car prices?
+
+**Line Graph: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(mapping = aes(x = odometer_value, y = price_usd)) +
+    scale_x_continuous(name="odometer_value", labels = scales::comma) +
+        labs(x = 'odometer_value', y = 'price(in USD)') + labs(title = 'Line plot - Prices vs odometer values')
+```
+
+We can clearly see that as odometer value is increasing, car prices are going down.
+
+**Violin Plot: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+plot3 <- ggplot(car_data,aes(x = odometer_value,y = '',color = odometer_value)) +
+        geom_violin(color="black", fill="pink") + geom_boxplot(width = .2,color="black", fill="violet") +
+        labs(x = 'odometer_value') + labs(title = 'Violin Plot + Box Plot for Odometer values')
+plot3
+```
+
+
+Violin plot, checking odometer distribution and box plot in the same graph. 
+
+
+**Scatter plot with fitting line**
+
+```{r}
+updated_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+```
+**Scatter Plot: Price(In USD) vs Odometer Value**
+
+```{r}
+ggplot(updated_data, aes(x=odometer_value, y=price_usd)) +
+   geom_point()+
+   geom_smooth(method=lm) +
+   labs(title = 'scatter plot - car prices vs odometer values') +
+   labs(x = 'odometer values(in KM)', y = 'price(in USD)') + scale_x_continuous(name='odometer values(in KM)', labels = scales::comma)
+```
+
+By removing outliers from odometer value, we are getting good relation for price vs odometer value.
+
+### Correlation Plot
+
+Correlation plot between the numerical features is considered
+
+```{r include=FALSE}
+car_data %>% select_if(is.numeric)->cars_numerical
+```
+
+```{r cor}
+corrplot(cor(cars_numerical), method = 'number')
+```
+
+The above correlation plot shows the relation between all the numerical features and the price_usd.
+
+Here, odometer_value has negative correlation with price(cc=-0.42). 
+
+
+
+
+
+## 4.Are the resale prices of the cars dependent on fuel and engine type? 
+
+**Based on Engine Fuel**
+
+**Boxplot- Price(In USD) vs Engine fuel**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=engine_fuel, y=price_usd)) + 
+  geom_boxplot(color="black", fill="green")+
+  labs(x="engine_fuel",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on engine_fuel") 
+plot1
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine fuel types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3=μ4=μ5=μ6
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+```{r}
+df_aov_2 = aov(price_usd~  engine_fuel , car_data)
+summary(df_aov_2)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine fuel type is different from each other.
+
+**Based on Engine Type**
+
+*Density plot _ Price(In USD) vs Engine Type**
+
+```{r results=T}
+library(ggpubr)
+xplot <- ggdensity(car_data, "price_usd", fill = "engine_type",
+                   palette = "arc") + labs(title = 'density plot for car price based on engine type category') + labs(x = 'price(in USD)')
+xplot
+```
+
+We can clearly separate out electric engine category from diesel and gasoline. most of the distribution is overlapped for diesel and gasoline and we can see the Pareto distribution in both the categories.
+
+### ANOVA TEST
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+Significance level is alpha=0.05
+
+```{r}
+df_aov_3 = aov(price_usd~  engine_type , car_data)
+summary(df_aov_3)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
+
+
+
+## 5.Does unknown features have any impact on car prices?
+
+*We have performed hypothesis testing on all the unknown features and We are keeping the important unknown features in our summary.
+
+
+Unknown features(feature0 to feature9)
+
+
+### T-test on Feature 3
+
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_3.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_3.
+
+```{r}
+with_feature_3<-subset(car_data,feature_3 == 'True')
+without_feature_3<-subset(car_data,feature_3 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature3 = t.test(x=with_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature3
+
+
+Hypothesis_test_price_without_feature3 = t.test(x=without_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature3
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_3.
+
+
+### T-test on Feature 5
+
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_5.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_5.
+
+```{r}
+with_feature_5<-subset(car_data,feature_5 == 'True')
+without_feature_5<-subset(car_data,feature_5 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+
+Hypothesis_test_price_with_feature5 = t.test(x=with_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature5
+
+
+Hypothesis_test_price_without_feature5 = t.test(x=without_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature5
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_5.
+
+### T-test on Feature 6
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_6.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_6.
+
+```{r}
+with_feature_6<-subset(car_data,feature_6 == 'True')
+without_feature_6<-subset(car_data,feature_6 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature6 = t.test(x=with_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature6
+
+
+Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature6
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_6.
+
+### T-test on Feature 7
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_7. 
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_7.
+
+```{r}
+with_feature_7<-subset(car_data,feature_7 == 'True')
+without_feature_7<-subset(car_data,feature_7 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature7
+
+
+Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature7
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_7.
+
+
+## Feature Selection and Predictive Modeling
+
+
+
+We are using below Feature Selection Methods:
+
+•	Boruta Method
+
+•	Random Forest
+
+•	Step Wise Regression
+
+•	MARS Method
+
+
+We are covering below methods for Predictive Modeling:
+
+•	Linear Regression
+
+•	Lasso and Ridge Regression
+
+•	SVM Regressor
+
+•	Random Forest and XG Boost
+
+
+
+## SMART Questions for Modeling
+
+Which factors are important in the prediction of resale price of the car?
+
+1)	Is year of production adding any detailing in the prediction of resale prices of the car?
+2)	Are color and body type are influencing the resale values of a car in predictive modelling?
+3)	Is odometer value have any importance in the prediction of resale price of the car?
+4)	Are unknown features and number of photos adding any value in the prediction of resale prices of the car?
+5)	In predictive modeling, are the resale prices of the cars influenced by the type of fuel and engine?
+
+
+
+## Feature Engineering
+
+We have a feature called manufacturer name, and it includes 55 distinct brands. So, in order to simplify things, we transformed multicategorical features into numerical features by replacing them with their median values.
+
+
+```{r}
+car_median_prices <-aggregate(car_data$price_usd, list(car_data$manufacturer_name), FUN=median)
+colnames(car_median_prices) <- c('manufacturer_name','average_brand_price')
+car_median_prices$price_categories <- ifelse(car_median_prices$average_brand_price <= 5000, 1, 
+                   ifelse(car_median_prices$average_brand_price <= 10000, 2, 
+                       ifelse(car_median_prices$average_brand_price <= 15000, 3, 
+                            ifelse(car_median_prices$average_brand_price <= 20000, 4, 5))))
+
+head(car_median_prices,2)
+
+updated_df <- merge(car_data,car_median_prices)
+updated_df$price_categories <- factor(updated_df$price_categories)
+str(updated_df)
+
+```
+
+
+## DATA Preprocessing before Modeling
+
+All input and output variables in machine learning models must be numeric. As a result, we have created the factors for categorical characteristics.
+
+We have normalized all of the numerical values in the dataset to a standard range in order to boost the machine learning algorithm's performance.
+
+
+```{r}
+updated_df <- rapply(updated_df,scale,c("numeric","integer"),how="replace")
+new_df <- updated_df
+str(updated_df)
+```
+
+
+
+## DATA Splitting before Modeling
+
+The train-test split approach is used to measure the accuracy of machine learning algorithms when they are used to generate predictions on data that was not used to train the model. Splitting your dataset is required for an unbiased assessment of prediction performance.
+
+Dataset is divided as 80% of the data is considered as a training Dataset and 20% of the data is for testing the model accuracy.
+
+
+```{r}
+library(caret)
+index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(new_df)
+
+train_df <- new_df[index,]
+test_df <- new_df[-index,]
+```
+
+
+
+
+
+
+
+
+
+
+
