@@ -240,7 +240,25 @@ ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
 
 ```
 
-## Linear regression
+## Data splitting(dividing data into train and test)
+
+
+```{r}
+library(caret)
+index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(new_df)
+
+train_df <- new_df[index,]
+test_df <- new_df[-index,]
+```
+
+
+```{r}
+head(train_df,5)
+```
+
+## 1. Linear regression
 
 ```{r}
 #######regression model
