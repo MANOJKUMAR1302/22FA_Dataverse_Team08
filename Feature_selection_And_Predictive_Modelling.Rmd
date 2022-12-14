@@ -261,11 +261,8 @@ head(train_df,5)
 ## 1. Linear regression
 
 ```{r}
-<<<<<<< Updated upstream
 #######################Linear regression##################################
-=======
-#######################   Linear Regression  ###############################
->>>>>>> Stashed changes
+
 model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
     engine_capacity + body_type + drivetrain + state + number_of_photos +
     feature_7 + feature_3 + feature_6 + feature_5 +
@@ -298,15 +295,6 @@ final <- rbind(mod_train,mod_test)
 final
 ```
 
-```{r}
-library(caret)
-index <- createDataPartition(updated_df$price_usd, p = 0.8, list = FALSE,times = 1)
-
-new_df <- as.data.frame(updated_df)
-
-train_df <- updated_df[index,]
-test_df <- updated_df[-index,]
-```
 
 ```{r}
 #######################Lasso regression##################################

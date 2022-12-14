@@ -769,6 +769,7 @@ Based on type of problem, this feature selection method will select the relevant
 
 **Reduces Training Time:** Less data means that algorithms train faster.
 
+
 ## Boruta Method
 
 Boruta algorithm is a wrapper built around the random forest classification algorithm. It makes an effort to include all significant, relevant aspects that could be present in your dataset with regard to an outcome variable.
@@ -820,23 +821,6 @@ plot(bo,las = 2, cex.axis = 0.7)
 
 According to the output graph, the most relevant attribute is production year, followed by engine capacity, drivetrain, and so on.
 
-
-## DATA Splitting before Modeling
-
-The train-test split approach is used to measure the accuracy of machine learning algorithms when they are used to generate predictions on data that was not used to train the model. Splitting your dataset is required for an unbiased assessment of prediction performance.
-
-Dataset is divided as 80% of the data is considered as a training Dataset and 20% of the data is for testing the model accuracy.
-
-
-```{r}
-library(caret)
-index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
-
-new_df <- as.data.frame(new_df)
-
-train_df <- new_df[index,]
-test_df <- new_df[-index,]
-```
 
 
 ## Random Forest Algorithm for feature selection
@@ -950,6 +934,102 @@ print(shortlistedVars)
 **Results:**
 
 We get the sub-categories of the features in the order of their importance.
+
+
+## DATA Splitting before Modeling
+
+The train-test split approach is used to measure the accuracy of machine learning algorithms when they are used to generate predictions on data that was not used to train the model. Splitting your dataset is required for an unbiased assessment of prediction performance.
+
+Dataset is divided as 80% of the data is considered as a training Dataset and 20% of the data is for testing the model accuracy.
+
+
+```{r}
+library(caret)
+index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(new_df)
+
+train_df <- new_df[index,]
+test_df <- new_df[-index,]
+```
+
+## Predictive Modeling Techniques
+
+Predictive modeling is a mathematical procedure that analyzes patterns in a collection of input data to forecast future occurrences or outcomes.
+
+
+## Linear Regression
+
+Linear regression is a predictive analysis algorithm based on supervised learning. It is a statistical procedure for determining the relationship between dependent and independent variables. This sort of distribution forms a line and is hence referred to as linear regression. 
+
+It is one of the most frequently used types of predictive analysis.
+
+They are classified into two subtypes based on the number of independent variables involved—simple and multiple regression.
+
+**The Five assumptions of Linear Regression are:**
+
+1)	Linear Relationship
+
+2)	Normal Distribution of Residuals
+
+3)	Multicollinearity 
+
+4)	Autocorrelation
+
+5)	Homoscedasticity
+
+**Mathematical Equation:**  y =b0+b1x
+
+    where y = Dependent Variable,
+          x = Independent Variable,
+         b0 = Intercept of line (Point where Regression line touches Y-axis)
+         b1 = Regression Coefficient (Slope of Regression Line)
+         
+         
+```{r}
+#######################Linear regression##################################
+
+model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+summary(model_linear_regression)
+```
+
+
+
+```{r}
+# We are predicting the accuracy based on train and test data
+prediction_reg <- predict(model_linear_regression,newdata = train_df)
+# We are using R Sqaure and RMSE value to check the accuracy of the model
+mod_train <- data.frame(Dataset_used = 'Train',RMSE = RMSE(prediction_reg,train_df$price_usd),Rsquared = R2(prediction_reg,train_df$price_usd))
+mod_train
+```
+
+
+```{r}
+# Predicting the values based on Test data
+prediction_reg <- predict(model_linear_regression,newdata = test_df)
+mod_test <- data.frame(Dataset_used = 'test',RMSE = RMSE(prediction_reg,test_df$price_usd),Rsquared = R2(prediction_reg,test_df$price_usd))
+mod_test
+```
+
+
+```{r}
+final <- rbind(mod_train,mod_test)
+final
+```
+
+## Linear Regression: Results
+
+To perform Linear regression, LM function is being used on the relevant features which we got after performing Feature Selection methods.
+
+R-Squared Value is 0.7514 which means this model can explain 75% of variation in price.
+Adjusted R Square value is 0.7507 is the R Square scaled by the number of parameters in the model.
+
+The value of F statistic will show whether the R Square is significant or not which means degrees of freedom.
+
+Here the p-value(2.2e-16) is less than 0.05 which mean that our model gives us a reliable estimate of price of the car.
 
 
 
