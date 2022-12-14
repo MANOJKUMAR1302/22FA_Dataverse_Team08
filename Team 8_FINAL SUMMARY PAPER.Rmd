@@ -143,7 +143,7 @@ library(ggplot2)
 library(corrplot)
 library(tidyverse)
 library(Boruta)
-
+library(stablelearner)
 #########################################################################add library
 
 
@@ -839,9 +839,84 @@ test_df <- new_df[-index,]
 ```
 
 
+## Random Forest Algorithm for feature selection
+
+
+Supervised machine learning algorithms like random forest are commonly utilized in classification and regression problems. 
+
+On various samples, it constructs decision trees and uses their average for classification and majority vote for regression.
+
+The Random Forest Algorithm's ability to handle data sets with both continuous variables, as in regression, and categorical variables, is one of its most important characteristics. In terms of categorization issues, it delivers superior outcomes.
+
+**Why we are using Random Forest Algorithm to get important features:**
+
+Random forest is using bootstrap aggregation which reduces the variance and bias from the model. So, we get the feature importance from the stable model and we can visualize it better in terms of a bar graph.
+
+It can also handle large datasets very easily.
+
+In terms of the output, we have performed Random Forest algorithm in two ways:
+
+1) Using cforest function in which we have to pass the independent variables and by using the control parameter where we are passing variable for decision tree in which mtry=2 is how many variables we are passing whereas mtree=100 is how many trees we are going to implement. 
+
+
+
+```{r}
+library(party)
+cf1 <- cforest(price_usd ~ . , data= new_df, control=cforest_unbiased(mtry=2,ntree=100)) # fit the random forest
+varimp(cf1)
+```
+
+```{r}
+cf_partykit_st <- stablelearner::as.stabletree(cf1)
+summary(cf_partykit_st, original = FALSE)
+barplot(cf_partykit_st)
+```
+
+```{r}
+image(cf_partykit_st, cex.names = 0.6)
+```
+
+After executing the code, we can see that production_year, manufacturer_name, odometer_value, transmission, and body_type features are individually explaining the variance better. And we can also see that unknown_feature_7 is explaining the variance better compared to other unknown features.
+
+
+2) We are using the traditional random forest algorithm for the second method in which we are adding the same parameters as the first method except that we are an extra parameter which is importance=TRUE because we are calculating the importance for every feature.
+
+```{r}
+#######random forest for feature selection
+new_df_filtered <- subset(new_df,select = -c(manufacturer_name))
+model_rf_base <- randomForest(price_usd~.,data = new_df_filtered,ntree=100,keep.forest=FALSE, importance=TRUE,do.trace = TRUE)
+print(model_rf_base)
+```
+
+
+
+```{r}
+library(ggplot2)
+ImpData <- as.data.frame(importance(model_rf_base))
+ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank())
+```
+
+
+**Results:**
+
+So, after executing the code we can see that there are 5 important features which are Production_year, Engine_capacity, drivetrain, body_type and average brand price.
+
+
+
 ## Stepwise regression
 
-### Why we choose to use this method?
+
+**Why we choose to use this method?**
 As we are using stepwise selection which is a combination of both forward and backward selection that results in the features and their sub-categories
 
 Step-wise regression is a regression model that finds the subset of variables from the dataset and results in the best performing model(i.e., a model that lowers prediction error) 
@@ -872,12 +947,9 @@ shortlistedVars <- shortlistedVars[!shortlistedVars %in% "(Intercept)"]  # remov
 print(shortlistedVars)
 ```
 
-Results:
+**Results:**
+
 We get the sub-categories of the features in the order of their importance.
-
-
-
-
 
 
 
