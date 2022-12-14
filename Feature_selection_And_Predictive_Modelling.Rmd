@@ -1,5 +1,5 @@
 ---
-title: "Feature selection - Prediction of resale car prices - Final porject"
+title: "Feature selection - Prediction of resale car prices - Final project"
 author: "Yashwant Bhaidkar, Manojkumar Yerraguntla, Lakshmi Sravya Chalapati , Sai Charith Govardhanam"
 date: "2022-11-30"
 output: html_document
@@ -155,3 +155,270 @@ ev
 ```{r}
 plot(ev)
 ```
+
+
+## Random forest using cforest method
+
+
+```{r}
+#Approach 1 - Using cforest
+library(party)
+cf1 <- cforest(price_usd ~ . , data= new_df, control=cforest_unbiased(mtry=2,ntree=100)) # fit the random forest
+varimp(cf1)
+```
+
+
+```{r}
+cf_partykit_st <- stablelearner::as.stabletree(cf1)
+summary(cf_partykit_st, original = FALSE)
+barplot(cf_partykit_st)
+```
+
+
+```{r}
+image(cf_partykit_st, cex.names = 0.6)
+```
+
+
+
+
+```{r}
+####### Approach 2: random forest for feature selection
+new_df_filtered <- subset(new_df,select = -c(manufacturer_name))
+model_rf_base <- randomForest(price_usd~.,data = new_df_filtered,ntree=100,keep.forest=FALSE, importance=TRUE,do.trace = TRUE)
+print(model_rf_base)
+```
+
+
+
+```{r}
+library(ggplot2)
+ImpData <- as.data.frame(importance(model_rf_base))
+ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank())
+```
+
+
+```{r}
+#Best features:
+# 
+# Total_years
+# Engine capacity
+# drivetrain
+# odometer_value
+# Manufacturer
+# body_type
+# Feature_6
+# Feature_7
+# state
+# Engine_type
+# transmission
+# number of photos
+# color
+# feature_3
+# feature_5
+```
+
+### Predictive Modeling
+
+```{r}
+# The Predictive Models used in this project are:
+# 1. Linear Regression
+# 2. Lasso and Ridge Regression
+# 3. SVM Regression
+# 4. Random Forest Regression
+# 5. XG Boost
+
+```
+
+## Data splitting(dividing data into train and test)
+
+
+```{r}
+library(caret)
+index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(new_df)
+
+train_df <- new_df[index,]
+test_df <- new_df[-index,]
+```
+
+
+```{r}
+head(train_df,5)
+```
+
+## 1. Linear regression
+
+```{r}
+#######regression model
+model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+summary(model_linear_regression)
+```
+
+
+
+```{r}
+prediction_reg <- predict(model_linear_regression,newdata = train_df)
+mod_train <- data.frame(Dataset_used = 'Train',RMSE = RMSE(prediction_reg,train_df$price_usd),Rsquared = R2(prediction_reg,train_df$price_usd))
+mod_train
+```
+
+
+
+```{r}
+prediction_reg <- predict(model_linear_regression,newdata = test_df)
+mod_test <- data.frame(Dataset_used = 'test',RMSE = RMSE(prediction_reg,test_df$price_usd),Rsquared = R2(prediction_reg,test_df$price_usd))
+mod_test
+```
+
+
+```{r}
+final <- rbind(mod_train,mod_test)
+final
+```
+
+```{r}
+library(caret)
+index <- createDataPartition(updated_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(updated_df)
+
+train_df <- updated_df[index,]
+test_df <- updated_df[-index,]
+```
+
+```{r}
+#######################Lasso regression##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_lasso  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = updated_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 1,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_lasso$bestTune
+```
+
+```{r}
+round(coef(model_lasso$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_lasso,newdata = train_df)
+mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_train
+```
+```{r}
+prediction1 <- predict(model_lasso,newdata = test_df)
+mod_test <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared = R2(prediction1,test_df$price_usd))
+new_df_l<-rbind(mod_train,mod_test)
+print(new_df_l)
+
+```
+
+
+```{r}
+####################### Ridge regression ##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_ridge  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = updated_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 0,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_ridge$bestTune
+```
+
+```{r}
+round(coef(model_ridge$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = train_df)
+mod_trainr <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_trainr
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = test_df)
+mod_testr <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared =R2(prediction1,test_df$price_usd))
+new_df1<-rbind(mod_trainr,mod_testr)
+print(new_df1)
+```
+
+
+## Random Forest regressor
+
+```{r}
+###RF model
+model_rf <- randomForest(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + average_brand_price,data = train_df,ntree=200, importance=TRUE,do.trace = TRUE)
+print(model_rf)
+```
+
+
+```{r}
+print(model_rf)
+```
+
+
+```{r}
+predYrf <- predict(model_rf, train_df)
+
+```
+
+```{r}
+mod_train <- data.frame(RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+mod_train
+```
+
+
+
+
+```{r}
+predYrf <- predict(model_rf, test_df)
+```
+
+```{r}
+mod_test <- data.frame(RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+mod_test
+```
+
+```{r}
+final_df <- rbind(mod_train,mod_test)
+final_df
+```
+
+
+
+
+
