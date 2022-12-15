@@ -439,6 +439,103 @@ final_df
 ```
 
 
+## XGBoost
 
+```{r}
+#xgboost model
+
+library(xgboost)
+
+train_x = data.matrix(train_df_new[, -16])
+train_y = train_df_new[,16]
+
+test_x = data.matrix(test_df_new[, -16])
+test_y = test_df_new[, 16]
+
+xgb_train = xgb.DMatrix(data = train_x, label = train_y)
+xgb_test = xgb.DMatrix(data = test_x, label = test_y)
+```
+
+
+
+
+```{r}
+depth <- list(1,2,3,4,5,6,7,8,9)
+nrounds <- list(100,200,300,400,500,600,700)
+# for(i in a):
+```
+
+```{r}
+train_results <- data.frame(matrix(ncol = 2, nrow = 0))
+x <- c("RMSE", "Rsquared")
+colnames(train_results) <- x
+
+test_results <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(test_results) <- x
+```
+
+
+```{r}
+for (x in depth) {
+  for (y in nrounds){
+    xgb_model <- xgboost(data = xgb_train, max.depth = x, nrounds = y)
+    predYrftrain <- predict(xgb_model, xgb_train)
+    mod_train <- data.frame(RMSE = RMSE(predYrftrain,train_df$price_usd),Rsquared = R2(predYrftrain,train_df$price_usd))
+    print(mod_train)
+    train_results <- rbind(train_results,mod_train)
+    predYrftest <- predict(xgb_model, xgb_test)
+    mod_test <- data.frame(RMSE = RMSE(predYrftest,test_df$price_usd),Rsquared = R2(predYrftest,test_df$price_usd))
+    test_results <- rbind(test_results,mod_test)
+    #print(mod_test)
+  }
+}
+```
+
+```{r}
+train_results
+```
+
+```{r}
+test_results
+```
+
+As we can see that with max.depth = 4 and n rounds of 600, we are getting the max test rsquare score 0.9273930 and 
+
+
+```{r}
+xgb_model_final <- xgboost(data = xgb_train, max.depth =4 , nrounds = 600)
+print(xgb_model_final)
+```
+
+
+
+
+```{r}
+predYrf <- predict(xgb_model_final, xgb_test)
+#p <- predict(test_df, model_rf, type='response')
+#prediction <- predict(model_rf, newdata= test_df)
+```
+
+```{r}
+mod_test <- data.frame(dataset = 'Test',RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+
+```
+
+```{r}
+mod_test
+predYrf <- predict(xgb_model_final, xgb_train)
+```
+
+
+```{r}
+mod_train <- data.frame(dataset = 'Train',RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+mod_train
+```
+
+
+```{r}
+Final_df <- rbind(mod_train,mod_test)
+Final_df
+```
 
 
