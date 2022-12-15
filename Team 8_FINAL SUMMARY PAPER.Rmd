@@ -144,6 +144,7 @@ library(corrplot)
 library(tidyverse)
 library(Boruta)
 library(stablelearner)
+library(xgboost)
 #########################################################################add library
 
 
@@ -1033,5 +1034,124 @@ Here the p-value(2.2e-16) is less than 0.05 which mean that our model gives us a
 
 
 
+## XGBoost Regressor
+
+Boosting is an iterative process and it uses pseudo residual term we get from the base model. 
+
+For node splitting, we use similarity score and based on information gain, we use that feature for node splitting. We feed the error term to the next model and improve the accuracy.
+
+
+**Why we are using XGBoost Algorithm:**
+
+XGBoost is one of the best boosting algorithm which is fast compared to bagging techniques.
+
+The two main reasons to use XGBoost are execution speed and model performance.
+
+•	XGBoost dominates structured or tabular datasets on classification and regression predictive modeling problems. 
+
+•	The evidence is that it is the go-to algorithm for competition winners on the Kaggle competitive data science platform.
+
+**You can specify hyperparameter values to the class constructor to configure the model.Perhaps the most commonly configured hyperparameters are the following:**
+
+•	n_estimators: The number of trees in the ensemble, often increased until no further improvements are seen.
+
+•	max_depth: The maximum depth of each tree, often values are between 1 and 10.
+
+
+```{r}
+#xgboost model
+
+library(xgboost)
+
+train_x = data.matrix(train_df_new[, -16])
+train_y = train_df_new[,16]
+
+test_x = data.matrix(test_df_new[, -16])
+test_y = test_df_new[, 16]
+
+xgb_train = xgb.DMatrix(data = train_x, label = train_y)
+xgb_test = xgb.DMatrix(data = test_x, label = test_y)
+```
+
+
+
+
+```{r}
+depth <- list(1,2,3,4,5,6,7,8,9)
+nrounds <- list(100,200,300,400,500,600,700)
+# for(i in a):
+```
+
+```{r}
+train_results <- data.frame(matrix(ncol = 2, nrow = 0))
+x <- c("RMSE", "Rsquared")
+colnames(train_results) <- x
+
+test_results <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(test_results) <- x
+```
+
+
+```{r}
+for (x in depth) {
+  for (y in nrounds){
+    xgb_model <- xgboost(data = xgb_train, max.depth = x, nrounds = y)
+    predYrftrain <- predict(xgb_model, xgb_train)
+    mod_train <- data.frame(RMSE = RMSE(predYrftrain,train_df$price_usd),Rsquared = R2(predYrftrain,train_df$price_usd))
+    print(mod_train)
+    train_results <- rbind(train_results,mod_train)
+    predYrftest <- predict(xgb_model, xgb_test)
+    mod_test <- data.frame(RMSE = RMSE(predYrftest,test_df$price_usd),Rsquared = R2(predYrftest,test_df$price_usd))
+    test_results <- rbind(test_results,mod_test)
+  }
+}
+```
+
+```{r}
+train_results
+```
+
+```{r}
+test_results
+```
+
+As we can see that with max.depth = 4 and n rounds of 600, we are getting the max test rsquare score 0.9273930 and 
+
+
+```{r}
+xgb_model_final <- xgboost(data = xgb_train, max.depth =4 , nrounds = 600)
+print(xgb_model_final)
+```
+
+
+```{r}
+predYrf <- predict(xgb_model_final, xgb_test)
+
+```
+
+```{r}
+mod_test <- data.frame(dataset = 'Test',RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+
+```
+
+```{r}
+mod_test
+predYrf <- predict(xgb_model_final, xgb_train)
+```
+
+
+```{r}
+mod_train <- data.frame(dataset = 'Train',RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+mod_train
+```
+
+
+```{r}
+Final_df <- rbind(mod_train,mod_test)
+Final_df
+```
+
+
+**Using XGBoost, we got r-squared around 92% and RMSE is significantly less compared to other models. XGBoost worked really well for this case study**
 
 
