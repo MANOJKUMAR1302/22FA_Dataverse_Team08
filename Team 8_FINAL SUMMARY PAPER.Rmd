@@ -986,6 +986,10 @@ They are classified into two subtypes based on the number of independent variabl
          b0 = Intercept of line (Point where Regression line touches Y-axis)
          b1 = Regression Coefficient (Slope of Regression Line)
          
+  
+  
+To perform Linear regression, LM function is being used on the relevant features which we got after performing Feature Selection methods.
+
          
 ```{r}
 #######################Linear regression##################################
@@ -1004,7 +1008,6 @@ summary(model_linear_regression)
 prediction_reg <- predict(model_linear_regression,newdata = train_df)
 # We are using R Sqaure and RMSE value to check the accuracy of the model
 mod_train <- data.frame(Dataset_used = 'Train',RMSE = RMSE(prediction_reg,train_df$price_usd),Rsquared = R2(prediction_reg,train_df$price_usd))
-mod_train
 ```
 
 
@@ -1012,7 +1015,6 @@ mod_train
 # Predicting the values based on Test data
 prediction_reg <- predict(model_linear_regression,newdata = test_df)
 mod_test <- data.frame(Dataset_used = 'test',RMSE = RMSE(prediction_reg,test_df$price_usd),Rsquared = R2(prediction_reg,test_df$price_usd))
-mod_test
 ```
 
 
@@ -1021,9 +1023,10 @@ final <- rbind(mod_train,mod_test)
 final
 ```
 
-## Linear Regression: Results
 
-To perform Linear regression, LM function is being used on the relevant features which we got after performing Feature Selection methods.
+**Linear Regression:Results**
+
+
 
 R-Squared Value is 0.7514 which means this model can explain 75% of variation in price.
 Adjusted R Square value is 0.7507 is the R Square scaled by the number of parameters in the model.
@@ -1031,6 +1034,7 @@ Adjusted R Square value is 0.7507 is the R Square scaled by the number of parame
 The value of F statistic will show whether the R Square is significant or not which means degrees of freedom.
 
 Here the p-value(2.2e-16) is less than 0.05 which mean that our model gives us a reliable estimate of price of the car.
+
 
 ## LASSO Regression:
 
@@ -1077,18 +1081,17 @@ round(coef(model_lasso$finalModel,model_lasso$bestTune$lambda),3)
 ```{r}
 prediction1 <- predict(model_lasso,newdata = train_df)
 mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
-mod_train
 ```
+
+
 ```{r}
 prediction1 <- predict(model_lasso,newdata = test_df)
 mod_test <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared = R2(prediction1,test_df$price_usd))
 new_df_l<-rbind(mod_train,mod_test)
 print(new_df_l)
-
 ```
 
 
-Results:
 
 ## Ridge Regression:
 
@@ -1127,7 +1130,6 @@ round(coef(model_ridge$finalModel,model_lasso$bestTune$lambda),3)
 ```{r}
 prediction1 <- predict(model_ridge,newdata = train_df)
 mod_trainr <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
-mod_trainr
 ```
 
 ```{r}
@@ -1138,7 +1140,60 @@ print(new_df1)
 ```
 
 
-Results:
+**Results:**
+Using Lasso and Ridge regression we got to know that there is no improvement in the Linear regression model after adding L1 or L2 regularization term in it.
+
+## Random forest
+
+Random Forest is a Supervised learning algorithm that is based on the ensemble learning method and many Decision Trees.
+
+Random Forest is a Bagging technique, so all calculations are run in parallel and there is no interaction between the Decision Trees when building them.
+
+RF can be used to solve both Classification and Regression tasks.
+
+The name “Random Forest” comes from the Bagging idea of data randomization (Random) and building multiple Decision Trees (Forest).
+
+Overall, it is a powerful algorithm that limits the disadvantages of a Decision Tree model.
+
+
+**Why we are using Random forest?:**
+
+As it is using the bagging technique, we get model with low bias and low variance.
+
+It almost does not overfit due to subset and feature randomization.
+
+**Model**
+
+```{r}
+###RF model
+model_rf <- randomForest(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + average_brand_price,data = train_df,ntree=200, importance=TRUE,do.trace = TRUE)
+print(model_rf)
+```
+
+
+
+```{r}
+predYrf <- predict(model_rf, train_df)
+mod_train <- data.frame(RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+```
+
+
+```{r}
+predYrf <- predict(model_rf, test_df)
+mod_test <- data.frame(RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+```
+
+```{r}
+final_df <- rbind(mod_train,mod_test)
+final_df
+```
+
+
+
+**Random forest is giving very good accuracy and it is minimizing the error term with high margin.** 
 
 
 
@@ -1182,48 +1237,7 @@ xgb_test = xgb.DMatrix(data = test_x, label = test_y)
 ```
 
 
-
-
-```{r}
-depth <- list(1,2,3,4,5,6,7,8,9)
-nrounds <- list(100,200,300,400,500,600,700)
-# for(i in a):
-```
-
-```{r}
-train_results <- data.frame(matrix(ncol = 2, nrow = 0))
-x <- c("RMSE", "Rsquared")
-colnames(train_results) <- x
-
-test_results <- data.frame(matrix(ncol = 2, nrow = 0))
-colnames(test_results) <- x
-```
-
-
-```{r}
-for (x in depth) {
-  for (y in nrounds){
-    xgb_model <- xgboost(data = xgb_train, max.depth = x, nrounds = y)
-    predYrftrain <- predict(xgb_model, xgb_train)
-    mod_train <- data.frame(RMSE = RMSE(predYrftrain,train_df$price_usd),Rsquared = R2(predYrftrain,train_df$price_usd))
-    print(mod_train)
-    train_results <- rbind(train_results,mod_train)
-    predYrftest <- predict(xgb_model, xgb_test)
-    mod_test <- data.frame(RMSE = RMSE(predYrftest,test_df$price_usd),Rsquared = R2(predYrftest,test_df$price_usd))
-    test_results <- rbind(test_results,mod_test)
-  }
-}
-```
-
-```{r}
-train_results
-```
-
-```{r}
-test_results
-```
-
-As we can see that with max.depth = 4 and n rounds of 600, we are getting the max test rsquare score 0.9273930 and 
+**We performed hyperparameter tuning and As we got best max.depth = 4 and n rounds of 600, we are getting the max test rsquare score 0.9273930 which is very good model.**
 
 
 ```{r}
@@ -1234,32 +1248,13 @@ print(xgb_model_final)
 
 ```{r}
 predYrf <- predict(xgb_model_final, xgb_test)
-
-```
-
-```{r}
 mod_test <- data.frame(dataset = 'Test',RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
-
-```
-
-```{r}
-mod_test
 predYrf <- predict(xgb_model_final, xgb_train)
-```
-
-
-```{r}
 mod_train <- data.frame(dataset = 'Train',RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
-mod_train
-```
-
-
-```{r}
 Final_df <- rbind(mod_train,mod_test)
 Final_df
 ```
 
 
 **Using XGBoost, we got r-squared around 92% and RMSE is significantly less compared to other models. XGBoost worked really well for this case study**
-
 
