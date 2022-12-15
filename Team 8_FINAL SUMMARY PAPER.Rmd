@@ -1032,6 +1032,114 @@ The value of F statistic will show whether the R Square is significant or not wh
 
 Here the p-value(2.2e-16) is less than 0.05 which mean that our model gives us a reliable estimate of price of the car.
 
+## LASSO Regression:
+
+**Why we are using Lasso regression?**
+
+The main advantage of a LASSO regression model is that it has the ability to set the coefficients for features it does not consider interesting to zero. This means that the model does some automatic feature selection to decide which features should and should not be included on its own.
+
+LASSO is short for Least Absolute Shrinkage and Selection Operator which is used for both regularization and model selection. This method is frequently used to choose a subset of variables. It outperforms other regression models in terms of prediction accuracy. Lasso Regularization also improves model interpretation.
+ 
+A tuning parameter, λ controls the strength of the L1 penalty. λ is basically the amount of shrinkage:
+
+•	When λ = 0, no parameters are eliminated. The estimate is equal to the one found with linear regression.
+
+•	As λ increases, more and more coefficients are set to zero and eliminated (theoretically, when λ = ∞, all coefficients are eliminated).
+
+•	As λ increases, bias increases.
+
+•	As λ decreases, variance increases.
+
+
+```{r echo=FALSE}
+#######################Lasso regression##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+
+```{r include=FALSE}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_lasso  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = new_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 1,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_lasso$bestTune
+```
+
+```{r}
+round(coef(model_lasso$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_lasso,newdata = train_df)
+mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_train
+```
+```{r}
+prediction1 <- predict(model_lasso,newdata = test_df)
+mod_test <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared = R2(prediction1,test_df$price_usd))
+new_df_l<-rbind(mod_train,mod_test)
+print(new_df_l)
+
+```
+
+
+Results:
+
+## Ridge Regression:
+
+**Why we are using Lasso regression?**
+
+We have chosen to perform ridge regression is because it protects the model from overfitting and it does not need unbiased estimators. There is only enough bias to make the estimates reasonably reliable approximations to the true population values.
+
+Ridge regression is a model tuning method that is used to analyze any data that suffers from multicollinearity. This method performs L2 regularization. When the issue of multicollinearity occurs, least-squares are unbiased, and variances are large, this results in predicted values being far away from the actual values.
+
+Min (||Y – X (theta) ||^2 + λ||theta||^2)
+
+Lambda is the penalty term. λ given here is denoted by an alpha parameter in the ridge function. So, by changing the values of alpha, we are controlling the penalty term. The higher the values of alpha, the bigger is the penalty and therefore the magnitude of coefficients is reduced. It shrinks the parameters. Therefore, it is used to prevent multicollinearity.
+
+```{r}
+####################### Ridge regression ##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_ridge  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = new_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 0,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_ridge$bestTune
+```
+
+```{r}
+round(coef(model_ridge$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = train_df)
+mod_trainr <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+mod_trainr
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = test_df)
+mod_testr <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared =R2(prediction1,test_df$price_usd))
+new_df1<-rbind(mod_trainr,mod_testr)
+print(new_df1)
+```
+
+
+Results:
+
 
 
 ## XGBoost Regressor
