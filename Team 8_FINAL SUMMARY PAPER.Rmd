@@ -897,6 +897,43 @@ ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
 So, after executing the code we can see that there are 5 important features which are Production_year, Engine_capacity, drivetrain, body_type and average brand price.
 
 
+## Multivariate Adaptive Regression Splines
+
+Multivariate Adaptive Regression Splines (MARS), is an algorithm designed for multivariate non-linear regression problems.
+
+Multivariate refers to the presence of multiple input variables, while nonlinear refers to the absence of a linear relationship that is, one that can be expressed as a straight line between the input variables and the target variable. 
+
+The MARS algorithm involves discovering a set of simple piece wise linear functions that characterize the data and using them in aggregate to make a prediction. In a sense, the model is an ensemble of linear functions.
+
+**MARS method works as follows:**
+
+•	Divide a dataset into k pieces.
+
+•	Fit a regression model to each piece.
+
+•	Use k-fold cross-validation to choose a value for k.
+
+**Why Mars Method?**
+
+We have chosen MARS method so that we can naturally handle mixed types of predictors (quantitative and qualitative) and as it also considers all possible binary partitions of the categories for a qualitative predictor into two groups.
+
+```{r}
+# install earth with 
+####MARS
+marsModel <- earth(price_usd ~ . , data = new_df) # build model
+ev <- evimp (marsModel) # estimate variable importance
+ev
+```
+
+
+```{r}
+#Plotting the Mars Method Results
+plot(ev)
+```
+
+**Results:**
+In the output, firstly we find out the Generalized cross validation (GCV), number of subset models when the variable occurs (nsubsets) and the residual sum of squares (RSS) and we perform the variable importance then we can see that by using the MARS method there are 4 important features which are Total_Years, engine_capacity, drivetrain and the Unknown_feature_6. 
+
 
 ## Stepwise regression
 
@@ -1142,6 +1179,57 @@ print(new_df1)
 
 **Results:**
 Using Lasso and Ridge regression we got to know that there is no improvement in the Linear regression model after adding L1 or L2 regularization term in it.
+
+## SVM Regressor
+
+**Why we are using SVM Regressor?**
+
+As the model is not only restricted to a linear model(as we have many kernel options), we have better performance in this model. At the same time SVR gives us flexibility to control the allowable errors – which is a big plus!
+Here we are using the best kernel type that gives us high accuracy
+
+**The Idea Behind Support Vector Regression**
+
+The problem of regression is to find a function that approximates mapping from an input domain to real numbers on the basis of a training sample. 
+
+Our main aim here is to decide a decision boundary at ‘a’ distance from the original hyperplane such that data points closest to the hyperplane or the support vectors are within that boundary line.
+
+Hence, we are going to take only those points that are within the decision boundary and have the least error rate, or are within the Margin of Tolerance. This gives us a better fitting model.
+
+The objective function of SVR is to minimize the coefficients and maximizing the margin.
+
+We can tune epsilon to gain the desired accuracy level of our model.
+
+**Our new objective function and constraints are as follows:**
+
+By default, the SVR model uses epsilon = 0.1 and cost=1.0 to build the model.
+
+If we don’t define any kernel in particular, the model automatically chooses best kernel on its own. But we have used a ‘Radial kernel’
+
+```{r}
+library(e1071)
+modelsvm <- svm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+print(modelsvm)
+
+```
+
+```{r}
+predYsvm = predict(modelsvm, train_df)
+mod_train <- data.frame(RMSE = RMSE(predYsvm,train_df$price_usd),Rsquared = R2(predYsvm,train_df$price_usd))
+predYsvm = predict(modelsvm, test_df)
+mod_test <- data.frame(RMSE = RMSE(predYsvm,test_df$price_usd),Rsquared = R2(predYsvm,test_df$price_usd))
+```
+
+
+```{r}
+final_svm_results <- rbind(mod_train,mod_test)
+final_svm_results
+```
+
+
+
 
 ## Random forest
 
