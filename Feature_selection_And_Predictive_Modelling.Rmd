@@ -13,6 +13,7 @@ library("plyr")
 library(Boruta)
 library(randomForest)
 library(earth)
+library(e1071)
 ```
 
 ## Loading dataset
@@ -368,6 +369,30 @@ new_df1<-rbind(mod_trainr,mod_testr)
 print(new_df1)
 ```
 
+#SVM Regressor
+
+```{r}
+library(e1071)
+modelsvm <- svm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+print(modelsvm)
+
+```
+
+```{r}
+predYsvm = predict(modelsvm, train_df)
+mod_train <- data.frame(RMSE = RMSE(predYsvm,train_df$price_usd),Rsquared = R2(predYsvm,train_df$price_usd))
+predYsvm = predict(modelsvm, test_df)
+mod_test <- data.frame(RMSE = RMSE(predYsvm,test_df$price_usd),Rsquared = R2(predYsvm,test_df$price_usd))
+```
+
+
+```{r}
+final_svm_results <- rbind(mod_train,mod_test)
+final_svm_results
+```
 
 ## Random Forest regressor
 
