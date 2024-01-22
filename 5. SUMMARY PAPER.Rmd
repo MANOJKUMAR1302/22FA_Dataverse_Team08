@@ -1,0 +1,1348 @@
+---
+title: "Used Car Price Prediction - Final Summary Paper"
+author: "Team Dataverse - Yashwant Bhaidkar, Lakshmi Sravya Chalapati,Manojkumar Yerraguntla,Sai Charith Govardhanam"
+date: "`r Sys.Date()`"
+# date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    code_folding: hide
+    highlight: pygments
+---
+
+<style type="text/css">
+p{ /* Normal  */
+   font-size: 18px;
+}
+body{ /* Normal  */
+   font-size: 18px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 32px;
+}
+h2 { /* Header 2 */
+ font-size: 26px;
+}
+h3 { /* Header 3 */
+ font-size: 22px;
+}
+code.r{ /* Code block */
+  font-size: 14px;
+}
+pre { /* Code block */
+  font-size: 14px
+}
+</style>
+---
+
+
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+knitr::opts_chunk$set(warning = F, results = "markup", message = F, comment = NA)
+# knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+## Why Used Car Price Prediction?
+A microchip shortage caused by the COVID-19 pandemic has had a significant impact on the global automobile industry, raising used car prices for buyers.
+
+Automobile manufacturers are unable to produce new vehicles due to raw material supply chain issues. Due to a lower-than-usual supply of vehicles on their lots, dealers selling new cars have struggled to keep up with demand. This has an impact on used car dealerships, who are charging higher prices to sell their vehicles. Customers who want to sell their vehicle to a used car dealership, on the other hand, will benefit from higher trade-in values.
+
+Price variations are common and can lead to misleading prices on any other website, necessitating the development of a tool to predict the pricing of used cars based on real data gathered from local websites in order to provide consumers with an accurate evaluation of cars.
+
+When Team Dataverse learned about the recent issue that arose in the automobile industry as a result of the COVID global pandemic, we attempted to determine which car attributes are most important in determining the price of a used car. Our analysis will be accurate enough to assist consumers in determining car pricing for either selling or purchasing purposes based on the vehicle's features.
+
+
+## Prior Research and Analysis
+With the rise of individual cars, more people are looking into getting their own car at an affordable price, usually looking in the used car market, "For each and every new car sold in the UAE in 2019, about 3.5 used cars were sold" (BIELSKI & RAMARATHNAM, 2020). In the coming years, the industry will be revolutionized, with markets powered by digitalization and new business models to improve focus efficiency and consumer needs.
+
+In recent years, used car prices have risen. Prices increased by 4-10% between 2018 and 2020, but dealers sold more cars in a shorter period of time. Furthermore, analysts have shown that car depreciation costs have only been decreasing in the UAE, a previously unseen phenomenon that has led to an increase in second-hand car demand (Bridge, 2020).
+
+Manheim The used vehicle index has seen an unprecedented increase in used car value, increasing 6.81% in the first 15 days of April 2021 compared to the month of March. In addition, the value has increased by 52.2% since April 2020, with the latest trend indicators indicating a few more weeks of appreciation. This is due to stimulus payments and tax refunds as a result of the Covid-19 ramifications, as well as a global decrease in car production. (2021 Used Vehicle Value Index).
+
+
+## About the Dataset
+
+The Used-Cars-Catalog data set was obtained from Kaggle (the World's Largest Data Scientists Community) in order to investigate the used car market. Data is pulled in Belarus (western Europe) on December 2, 2019. 
+
+**Dataset Link:**
+https://www.kaggle.com/datasets/lepchenkov/usedcarscatalog?selectcars.csv=
+
+•	The dataset contains 38531 observations.
+
+•	The dataset contains 30 variables.
+
+**Dataset Variables:**
+
+•	[1-5] Manufacturer Name, Model Name, Transmission, Color, Odometer Value
+
+•	[6-10] Year Produced, Engine Fuel, Engine Has Gas, Engine Type, Engine Capacity
+
+•	[11-15] Body Type, Warranty, State, Drivetrain, Price in USD
+
+•	[16-20] Is Exchangeable, Location, Number of Photos, Upgrade Count, Duration Listed 
+
+•	[21-30] Feature 0 to Feature 9
+
+•	The engine capacity variable has ten null values that have been replaced by the mean because they have no effect on the data distribution.
+
+•	Our team used exploratory data analysis and hypothesis testing to estimate the relationship between the dependent variable (Car's price), and several independent variables that included both numerical and categorical values.
+
+## Limitations of Dataset
+•  We have the data only till 2019. So, we don’t know the post covid trends and the changes in the prices couldn’t be explained.
+
+•  The dataset has data only related to the Belarus region. There is no global exposure.
+
+•  More data can lead to predictions that are more reliable. 
+
+•  Second, there might be additional traits that are reliable predictors. 
+
+•  Here are some examples of variables that could enhance the model: doors, gas mileage (mpg), time spent undergoing mechanical and cosmetic repairs, used-to-new ratio, and appraisal-to-trade ratio.
+
+• There are ten unknown features (0-9) in the dataset. We don't know which part of the car these unknown features represent. Based on the results, we can conclude whether the feature is outdated or a luxury car feature.
+
+## SMART Questions for EDA:
+
+**Why team came up with the below smart Questions?**
+
+Data Verse team members are avid vehicle enthusiasts, therefore we used their knowledge of the most prevalent and crucial aspects to come up with SMART questions. In order to arrive at a conclusion on the target variable price, a few questions were posed, and analysis was conducted utilizing Boxplots, Scatterplots, t-tests, anova, and chi-square tests, among other tools.
+
+
+**What are the factors affecting the prices of used cars?**
+
+1)	Are the car prices dependent on the year of production or number of photos?
+
+2)	Does colour and body type have any impact on the resale prices of the cars?
+
+3)	Does the odometer value have any impact on the car prices?
+
+4)	Are the resale prices of the cars dependent on fuel and engine type?
+
+5)	Does unknown features have any impact on car prices?
+
+
+
+
+
+## Importing the Libraries and Dataset
+
+```{r Importing Libraries, include=FALSE}
+# Required libraries are installed
+library(ezids)
+library(plotly)
+library(viridis)
+library(hrbrthemes)
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+library(Boruta)
+library(stablelearner)
+library(xgboost)
+#########################################################################add library
+
+
+```
+
+We have imported the data from cars.csv file and stored it as car_data dataframe.
+
+```{r results=T}
+car_data = data.frame(read.csv('cars.csv'))
+str(car_data)
+```
+
+## Data cleaning
+
+Convert the below variables in the dataset as factor to make them categorical.
+
+•	transmission
+
+•	engine_fuel
+
+•	engine_has_gas
+
+•	engine_type
+
+•	body_type
+
+•	has_warranty
+
+•	state
+
+•	drivetrain
+
+•	is exchangeable
+
+```{r results=T}
+car_data$transmission = as.factor(car_data$transmission)
+car_data$engine_fuel = as.factor(car_data$engine_fuel)
+car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
+car_data$engine_type = as.factor(car_data$engine_type)
+car_data$body_type = as.factor(car_data$body_type)
+car_data$has_warranty = as.factor(car_data$has_warranty)
+car_data$state = as.factor(car_data$state)
+car_data$drivetrain = as.factor(car_data$drivetrain)
+car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
+car_data$location_region = as.factor(car_data$location_region)
+```
+
+Updating the unknown features (Feature 0 to Feature 9) as factor in bulk
+
+```{r results=T}
+feature_cols <- c(20:29)
+car_data[feature_cols] <- lapply(car_data[feature_cols],factor)
+str(car_data)
+```
+
+In the dataset, there are 10 null values present in engine_capacity variable.
+
+```{r results=T}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+```{r}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- 0
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+s <- getmode(car_data$engine_capacity)
+cat("For Engine Capcity Mean is:",mean(car_data$engine_capacity),"Median is:",median(car_data$engine_capacity),"Mode is:",s)
+```
+
+•	The engine capacity variable has 10 null values which have been replaced by the mean as it will not impact the distribution of data.
+
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- mean(car_data$engine_capacity,na.rm = TRUE)
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+
+•	We are not removing the outilers in the odometer variable as some of the vehicles might be in use from longer time.
+
+•	The team examined all variables except model_name, engine_has_gas, car_state, Location_region, and Duration List.
+
+
+## Exploratory Data Analysis
+
+This graph shows about the distribution of Resale prices of the entire dataset.
+
+```{r results=T}
+p <- ggplot(car_data, aes(x = price_usd)) +
+     geom_histogram(aes(y = stat(density), colour = "HIST"), fill="light blue", bins=30, alpha=.5) +
+      labs(x = 'price(In USD)') + labs(title = 'Distribution of Resale Prices - Histogram')
+p
+```
+
+
+## 1.Are the car prices dependent on the year of production or number of photos?
+
+
+**Based on year of Production**
+
+Boxplot - Price(In USD) vs Year of Production
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd)) + labs(x = 'Year of production', y = 'Price(in USD)') + 
+    labs(title ='Year wise car price values')
+```
+
+
+As we can see that car prices of vintage cars is high. Also the resell price is high for latest cars.
+
+```{r results=T}
+plot_transmission <- ggplot(data = car_data) +
+    geom_smooth(color = 'red',mapping = aes(x = year_produced, y = price_usd,linetype = transmission)) + 
+    labs(title = 'Year wise car price values based on transmission type') + labs(x = 'Year of production', y = 'Price(in USD)')
+plot_transmission
+```
+
+To check the Vintage category, mechanical are categorize as vintage and automatic cars are available from 1978. We are getting the similar results compared to the previous plot based on complete data.
+
+### Chi Square Test
+
+With the chi square test of independence, we are checking that resale car prices are dependent on the year of manufacture or not.
+
+H0: Car prices and year of production are independent of each other.
+
+H1: Car prices and year of production are dependent of each other.
+
+
+```{r}
+p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
+year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
+lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
+df <- as.data.frame(do.call(cbind, lists))
+conTable = table(df)
+print(conTable)
+```
+
+```{r}
+head(df,3)
+```
+
+```{r results=T}
+chitest = chisq.test(conTable)
+chitest
+```
+
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than 0.05 hance we are rejecting the null hypothesis.
+
+It means prices and year of production are dependent of each other
+
+
+
+**Based on number of photos**
+
+
+Creating buckets for number of photos feature
+
+```{r}
+
+Photo_bucket <- within(car_data, {   
+  Photo_bucket.cat <- NA # need to initialize variable
+  Photo_bucket.cat[number_of_photos < 6] <- "0-5"
+  Photo_bucket.cat[number_of_photos >= 6 & number_of_photos < 11] <- "6-10"
+  Photo_bucket.cat[number_of_photos >= 11 & number_of_photos < 16] <- "11-15"
+  Photo_bucket.cat[number_of_photos >= 16 & number_of_photos < 21] <- "16-20"
+  Photo_bucket.cat[number_of_photos >= 21 & number_of_photos < 26] <- "21-25"
+  Photo_bucket.cat[number_of_photos >= 26 & number_of_photos < 31] <- "26-30"
+  Photo_bucket.cat[number_of_photos > 30] <- "more than 30"
+   } )
+
+Photo_bucket$Photo_bucket.cat <- factor(Photo_bucket$Photo_bucket.cat, levels= c("0-5","6-10","11-15","16-20","21-25","26-30","more than 30"))
+
+```
+
+**Boxplot - Price(In USD) vs Number of Photos**
+
+```{r}
+
+ggplot(Photo_bucket, aes(y = price_usd , x = Photo_bucket.cat)) + geom_boxplot(color="black", fill="#bc5090") + labs(title = 'Boxplot - impact of number of photos on car prices') + labs(x = 'Number of photos', y = 'Price(in USD)')
+
+```
+
+
+
+## 2.Does colour and body type have any impact on the resale prices of the cars?
+
+**Boxplot - Price(In USD) vs Car color**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=color, y=price_usd)) + 
+  geom_boxplot(color="blue", fill="orange")+
+  labs(x="Car Color",y="price_usd") + labs(title="Boxplot - Car Color and its Price (In USD)") 
+plot1
+```
+
+### ANOVA Test
+
+ANOVA is helpful for testing three or more variables.It is similar to multiple two-sample t-tests.The one-way ANOVA is used to determine whether there are any statistically significant differences between the means of three or more independent (unrelated) groups.
+
+The null hypothesis states that the mean resale price in usd is equal among all color groups.
+
+H0 : There is no difference in mean Prices based on color feature
+
+H1 : There is difference in mean Prices based on color feature
+
+Anova test for car color
+
+```{r}
+df_aov_1 = aov(price_usd ~  color , car_data)
+summary(df_aov_1)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of color is different from each other.
+
+
+**Based on Body Type**
+
+**Boxplot - Price(In USD) vs Body Type**
+
+```{r results=T}
+plot_body <- ggplot(car_data, aes(x=body_type, y=price_usd)) + 
+  geom_boxplot(color="black", fill="#F48FB1")+
+  labs(x="body type",y="price(in USD)") + labs(title="Boxplot - Car Price distribution based on body type") 
+plot_body
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of car body type.
+
+H0 : all means are equal
+
+H1 : not all means are equal
+
+Decide on the significance level
+significance level is α=0.05
+
+```{r}
+df_aov_4 = aov(price_usd ~  body_type , car_data)
+summary(df_aov_4)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+The p-value is less than the specified significance level of 0.05; we reject null hypothesis. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+
+At 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+
+
+
+## 3.Does the odometer value have any impact on the car prices?
+
+**Line Graph: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+ggplot(data = car_data) +
+    geom_smooth(mapping = aes(x = odometer_value, y = price_usd)) +
+    scale_x_continuous(name="odometer_value", labels = scales::comma) +
+        labs(x = 'odometer_value', y = 'price(in USD)') + labs(title = 'Line plot - Prices vs odometer values')
+```
+
+We can clearly see that as odometer value is increasing, car prices are going down.
+
+**Violin Plot: Price(In USD) vs Odometer Value**
+
+```{r results=T}
+plot3 <- ggplot(car_data,aes(x = odometer_value,y = '',color = odometer_value)) +
+        geom_violin(color="black", fill="pink") + geom_boxplot(width = .2,color="black", fill="violet") +
+        labs(x = 'odometer_value') + labs(title = 'Violin Plot + Box Plot for Odometer values')
+plot3
+```
+
+
+Violin plot, checking odometer distribution and box plot in the same graph. 
+
+
+**Scatter plot with fitting line**
+
+```{r}
+updated_data = outlierKD2(car_data, odometer_value, TRUE, TRUE, TRUE, TRUE)
+```
+**Scatter Plot: Price(In USD) vs Odometer Value**
+
+```{r}
+ggplot(updated_data, aes(x=odometer_value, y=price_usd)) +
+   geom_point()+
+   geom_smooth(method=lm) +
+   labs(title = 'scatter plot - car prices vs odometer values') +
+   labs(x = 'odometer values(in KM)', y = 'price(in USD)') + scale_x_continuous(name='odometer values(in KM)', labels = scales::comma)
+```
+
+By removing outliers from odometer value, we are getting good relation for price vs odometer value.
+
+### Correlation Plot
+
+Correlation plot between the numerical features is considered
+
+```{r include=FALSE}
+car_data %>% select_if(is.numeric)->cars_numerical
+```
+
+```{r cor}
+corrplot(cor(cars_numerical), method = 'number')
+```
+
+The above correlation plot shows the relation between all the numerical features and the price_usd.
+
+Here, odometer_value has negative correlation with price(cc=-0.42). 
+
+
+
+
+
+## 4.Are the resale prices of the cars dependent on fuel and engine type? 
+
+**Based on Engine Fuel**
+
+**Boxplot- Price(In USD) vs Engine fuel**
+
+```{r results=T}
+plot1 <- ggplot(car_data, aes(x=engine_fuel, y=price_usd)) + 
+  geom_boxplot(color="black", fill="green")+
+  labs(x="engine_fuel",y="price(in USD)") + labs(title="boxplot - Car Price distribution based on engine_fuel") 
+plot1
+```
+
+### ANOVA Test
+
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine fuel types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3=μ4=μ5=μ6
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+```{r}
+df_aov_2 = aov(price_usd~  engine_fuel , car_data)
+summary(df_aov_2)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine fuel type is different from each other.
+
+**Based on Engine Type**
+
+*Density plot _ Price(In USD) vs Engine Type**
+
+```{r results=T}
+library(ggpubr)
+xplot <- ggdensity(car_data, "price_usd", fill = "engine_type",
+                   palette = "arc") + labs(title = 'density plot for car price based on engine type category') + labs(x = 'price(in USD)')
+xplot
+```
+
+We can clearly separate out electric engine category from diesel and gasoline. most of the distribution is overlapped for diesel and gasoline and we can see the Pareto distribution in both the categories.
+
+### ANOVA TEST
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine types.
+
+Null Hypothesis         H0 : μ1=μ2=μ3
+
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+Significance level is alpha=0.05
+
+```{r}
+df_aov_3 = aov(price_usd~  engine_type , car_data)
+summary(df_aov_3)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
+
+
+
+## 5.Does unknown features have any impact on car prices?
+
+*We have performed hypothesis testing on all the unknown features and We are keeping the important unknown features in our summary.
+
+
+Unknown features(feature0 to feature9)
+
+
+### T-test on Feature 3
+
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_3.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_3.
+
+```{r}
+with_feature_3<-subset(car_data,feature_3 == 'True')
+without_feature_3<-subset(car_data,feature_3 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature3 = t.test(x=with_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature3
+
+
+Hypothesis_test_price_without_feature3 = t.test(x=without_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature3
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_3.
+
+
+### T-test on Feature 5
+
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_5.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_5.
+
+```{r}
+with_feature_5<-subset(car_data,feature_5 == 'True')
+without_feature_5<-subset(car_data,feature_5 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+
+Hypothesis_test_price_with_feature5 = t.test(x=with_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature5
+
+
+Hypothesis_test_price_without_feature5 = t.test(x=without_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature5
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_5.
+
+### T-test on Feature 6
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_6.
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_6.
+
+```{r}
+with_feature_6<-subset(car_data,feature_6 == 'True')
+without_feature_6<-subset(car_data,feature_6 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature6 = t.test(x=with_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature6
+
+
+Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature6
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_6.
+
+### T-test on Feature 7
+
+H0: There is no difference in the mean price of the cars and the mean price based on unknown_feature_7. 
+
+H1: There is a difference in the mean price of the cars and the mean price based on unknown_feature_7.
+
+```{r}
+with_feature_7<-subset(car_data,feature_7 == 'True')
+without_feature_7<-subset(car_data,feature_7 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature7
+
+
+Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature7
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown_feature_7.
+
+
+## Feature Selection and Predictive Modeling
+
+
+
+We are using below Feature Selection Methods:
+
+•	Boruta Method
+
+•	Random Forest
+
+•	Step Wise Regression
+
+•	MARS Method
+
+
+We are covering below methods for Predictive Modeling:
+
+•	Linear Regression
+
+•	Lasso and Ridge Regression
+
+•	SVM Regressor
+
+•	Random Forest and XG Boost
+
+
+
+## SMART Questions for Modeling
+
+Which factors are important in the prediction of resale price of the car?
+
+1)	Is year of production adding any detailing in the prediction of resale prices of the car?
+2)	Are color and body type are influencing the resale values of a car in predictive modelling?
+3)	Is odometer value have any importance in the prediction of resale price of the car?
+4)	Are unknown features and number of photos adding any value in the prediction of resale prices of the car?
+5)	In predictive modeling, are the resale prices of the cars influenced by the type of fuel and engine?
+
+
+
+## Feature Engineering
+
+We have a feature called manufacturer name, and it includes 55 distinct brands. So, in order to simplify things, we transformed multicategorical features into numerical features by replacing them with their median values.
+
+
+```{r}
+car_median_prices <-aggregate(car_data$price_usd, list(car_data$manufacturer_name), FUN=median)
+colnames(car_median_prices) <- c('manufacturer_name','average_brand_price')
+car_median_prices$price_categories <- ifelse(car_median_prices$average_brand_price <= 5000, 1, 
+                   ifelse(car_median_prices$average_brand_price <= 10000, 2, 
+                       ifelse(car_median_prices$average_brand_price <= 15000, 3, 
+                            ifelse(car_median_prices$average_brand_price <= 20000, 4, 5))))
+
+head(car_median_prices,2)
+
+updated_df <- merge(car_data,car_median_prices)
+updated_df$price_categories <- factor(updated_df$price_categories)
+str(updated_df)
+
+```
+
+
+## DATA Preprocessing before Modeling
+
+All input and output variables in machine learning models must be numeric. As a result, we have created the factors for categorical characteristics.
+
+We have normalized all of the numerical values in the dataset to a standard range in order to boost the machine learning algorithm's performance.
+
+
+```{r}
+updated_df <- rapply(updated_df,scale,c("numeric","integer"),how="replace")
+new_df <- updated_df
+str(updated_df)
+```
+
+## Feature Selection Methods
+
+Feature Selection is the method of reducing the input variable to your model by using only relevant data and consistent features getting rid of noise in data. 
+
+Based on type of problem, this feature selection method will select the relevant features for your machine learning model.
+
+**Three key benefits of performing feature selection on your data are:**
+
+**Reduces Overfitting:** Less redundant data means less opportunity to make decisions based on noise. 
+
+**Improves Accuracy:** Less misleading data means modeling accuracy improves and prediction power of the algorithms increases.
+
+**Reduces Training Time:** Less data means that algorithms train faster.
+
+
+## Boruta Method
+
+Boruta algorithm is a wrapper built around the random forest classification algorithm. It makes an effort to include all significant, relevant aspects that could be present in your dataset with regard to an outcome variable.
+
+**What is Wrapper Method?**
+
+In wrapper methods, it uses a subset of features and train a model using them. Based on the inferences drawn from the previous model; it will add or remove features from the subset. Forward Selection, Backward elimination are some of the examples for wrapper methods.
+
+**Why Boruta method?**
+
+This method shows the graphical representation of important features required for our modeling in terms of boxplot and it's very easy to understand the imporatnt feature with the help of visualization.
+
+This method actually creates the shadow features each original feature. If the z-score of the original features is greater than the highest MDI Score of all the shadow features it stores the values as hit in the vector. If the number of hits are more it will be considered as the important feature.
+
+**What is the Boruta method's procedure?**
+
+•	The dataset is first duplicated, and each column's values are then randomly shuffled. These values are called shadow features.  After that, it uses the dataset to train a classifier, such as a Random Forest Classifier. 
+
+•	After running the method, it uses the Mean Decrease Accuracy or Mean Decrease Impurity to estimate the relative importance of each feature in the data set. The feature is considered as better or more significant if its value is high.
+
+•	The algorithm then determines whether any of the genuine features have a greater priority. That is, if the feature has a better Z-score than the highest Z-score of its shadow features than the best of the shadow features. A Z-score is the number of standard deviations from the mean a data point.
+
+•	If they do, a vector is created to capture this. They are referred to as hits. It will then proceed with a subsequent iteration. You will have a table of these hits at the conclusion of a certain number of repetitions.
+
+•	At each iteration, the algorithm compares the Z-scores of the shuffled copies of the features with the original features to check if the latter performed better than the former. If it does, the algorithm will designate the characteristic as significant.
+
+•	Essentially, the method attempts to prove the significance of the feature by comparing it to random shuffled copies, which increases robustness. This is accomplished by comparing the number of times a feature outperformed the shadow features using a binomial distribution.
+
+•	If a feature isn't recorded as a hit after, say, 15 iterations, you reject it and remove it from the original matrix. After a set number of iterations -or if all the features have been either confirmed or rejected- you stop.
+
+Now we compare the relevance of each original attribute to a threshold. This time, the threshold is specified as the feature with the highest feature relevance among the shadow features. A "hit" occurs when the relevance of a characteristic exceeds this level. The premise is that a feature is only helpful if it can outperform the best randomized feature.
+
+## Boruta Method: Results
+
+The code below is for the Boruta technique, with price_usd as the dependant variable and new df as our dataset.
+
+```{r}
+# Applying the Boruta Method for the cars Dataset
+bo <- Boruta(price_usd~.,data = new_df, doTrace = 2)
+print(bo)
+```
+According to the Boruta method result, it ran 12 iterations in 6 minutes and shown that 27 attributes are relevant, and we choose the top consistent features to develop our modeling.
+
+
+```{r}
+# Plotting a boxplot for all the features according to it's importance
+plot(bo,las = 2, cex.axis = 0.7)
+```
+
+According to the output graph, the most relevant attribute is production year, followed by engine capacity, drivetrain, and so on.
+
+
+
+## Random Forest Algorithm for feature selection
+
+
+Supervised machine learning algorithms like random forest are commonly utilized in classification and regression problems. 
+
+On various samples, it constructs decision trees and uses their average for classification and majority vote for regression.
+
+The Random Forest Algorithm's ability to handle data sets with both continuous variables, as in regression, and categorical variables, is one of its most important characteristics. In terms of categorization issues, it delivers superior outcomes.
+
+**Why we are using Random Forest Algorithm to get important features:**
+
+Random forest is using bootstrap aggregation which reduces the variance and bias from the model. So, we get the feature importance from the stable model and we can visualize it better in terms of a bar graph.
+
+It can also handle large datasets very easily.
+
+In terms of the output, we have performed Random Forest algorithm in two ways:
+
+1) Using cforest function in which we have to pass the independent variables and by using the control parameter where we are passing variable for decision tree in which mtry=2 is how many variables we are passing whereas mtree=100 is how many trees we are going to implement. 
+
+
+
+```{r}
+library(party)
+cf1 <- cforest(price_usd ~ . , data= new_df, control=cforest_unbiased(mtry=2,ntree=100)) # fit the random forest
+varimp(cf1)
+```
+
+```{r}
+cf_partykit_st <- stablelearner::as.stabletree(cf1)
+summary(cf_partykit_st, original = FALSE)
+barplot(cf_partykit_st)
+```
+
+```{r}
+image(cf_partykit_st, cex.names = 0.6)
+```
+
+After executing the code, we can see that production_year, manufacturer_name, odometer_value, transmission, and body_type features are individually explaining the variance better. And we can also see that unknown_feature_7 is explaining the variance better compared to other unknown features.
+
+
+2) We are using the traditional random forest algorithm for the second method in which we are adding the same parameters as the first method except that we are an extra parameter which is importance=TRUE because we are calculating the importance for every feature.
+
+```{r}
+#######random forest for feature selection
+new_df_filtered <- subset(new_df,select = -c(manufacturer_name))
+model_rf_base <- randomForest(price_usd~.,data = new_df_filtered,ntree=100,keep.forest=FALSE, importance=TRUE,do.trace = TRUE)
+print(model_rf_base)
+```
+
+
+
+```{r}
+library(ggplot2)
+ImpData <- as.data.frame(importance(model_rf_base))
+ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank())
+```
+
+
+**Results:**
+
+So, after executing the code we can see that there are 5 important features which are Production_year, Engine_capacity, drivetrain, body_type and average brand price.
+
+
+## Multivariate Adaptive Regression Splines
+
+Multivariate Adaptive Regression Splines (MARS), is an algorithm designed for multivariate non-linear regression problems.
+
+Multivariate refers to the presence of multiple input variables, while nonlinear refers to the absence of a linear relationship that is, one that can be expressed as a straight line between the input variables and the target variable. 
+
+The MARS algorithm involves discovering a set of simple piece wise linear functions that characterize the data and using them in aggregate to make a prediction. In a sense, the model is an ensemble of linear functions.
+
+**MARS method works as follows:**
+
+•	Divide a dataset into k pieces.
+
+•	Fit a regression model to each piece.
+
+•	Use k-fold cross-validation to choose a value for k.
+
+**Why Mars Method?**
+
+We have chosen MARS method so that we can naturally handle mixed types of predictors (quantitative and qualitative) and as it also considers all possible binary partitions of the categories for a qualitative predictor into two groups.
+
+```{r}
+# install earth with 
+####MARS
+marsModel <- earth(price_usd ~ . , data = new_df) # build model
+ev <- evimp (marsModel) # estimate variable importance
+ev
+```
+
+
+```{r}
+#Plotting the Mars Method Results
+plot(ev)
+```
+
+**Results:**
+In the output, firstly we find out the Generalized cross validation (GCV), number of subset models when the variable occurs (nsubsets) and the residual sum of squares (RSS) and we perform the variable importance then we can see that by using the MARS method there are 4 important features which are Total_Years, engine_capacity, drivetrain and the Unknown_feature_6. 
+
+
+## Stepwise regression
+
+
+**Why we choose to use this method?**
+As we are using stepwise selection which is a combination of both forward and backward selection that results in the features and their sub-categories
+
+Step-wise regression is a regression model that finds the subset of variables from the dataset and results in the best performing model(i.e., a model that lowers prediction error) 
+
+This is done by entering and removing predictors in a stepwise manner until there is no statistically valid reason to enter or remove any more.
+
+There are three strategies of stepwise regression
+
+1.Forward selection, which starts with no predictors in the model, iteratively adds the most contributive predictors, and stops when the improvement is no longer statistically significant.
+
+2.Backward selection (or backward elimination), which starts with all predictors in the model (full model), iteratively removes the least contributive predictors, and stops when you have a model where all predictors are statistically significant.
+
+3.Stepwise selection (or sequential replacement), which is a combination of forward and backward selections. 
+
+
+## Feature selction using step wise regression method
+
+We are using stepwise selection strategy which starts with no predictors, then sequentially add the most contributive predictors (like forward selection). After adding each new variable, remove any variables that no longer provide an improvement in the model fit (like backward selection).
+
+
+```{r}
+#Stepwise regression
+base.mod <- lm(price_usd ~ 1 , data= new_df)  # base intercept only model
+all.mod <- lm(price_usd ~ . , data= new_df) # full model with all predictors
+stepMod <- step(base.mod, scope = list(lower = base.mod, upper = all.mod), direction = "both", trace = 0, steps = 1000)  # perform step-wise algorithm
+shortlistedVars <- names(unlist(stepMod[[1]])) # get the shortlisted variable.
+shortlistedVars <- shortlistedVars[!shortlistedVars %in% "(Intercept)"]  # remove intercept 
+print(shortlistedVars)
+```
+
+**Results:**
+
+We get the sub-categories of the features in the order of their importance.
+
+
+## DATA Splitting before Modeling
+
+The train-test split approach is used to measure the accuracy of machine learning algorithms when they are used to generate predictions on data that was not used to train the model. Splitting your dataset is required for an unbiased assessment of prediction performance.
+
+Dataset is divided as 80% of the data is considered as a training Dataset and 20% of the data is for testing the model accuracy.
+
+
+```{r}
+library(caret)
+index <- createDataPartition(new_df$price_usd, p = 0.8, list = FALSE,times = 1)
+
+new_df <- as.data.frame(new_df)
+
+train_df <- new_df[index,]
+test_df <- new_df[-index,]
+```
+
+## Predictive Modeling Techniques
+
+Predictive modeling is a mathematical procedure that analyzes patterns in a collection of input data to forecast future occurrences or outcomes.
+
+
+## Linear Regression
+
+Linear regression is a predictive analysis algorithm based on supervised learning. It is a statistical procedure for determining the relationship between dependent and independent variables. This sort of distribution forms a line and is hence referred to as linear regression. 
+
+It is one of the most frequently used types of predictive analysis.
+
+They are classified into two subtypes based on the number of independent variables involved—simple and multiple regression.
+
+**The Five assumptions of Linear Regression are:**
+
+1)	Linear Relationship
+
+2)	Normal Distribution of Residuals
+
+3)	Multicollinearity 
+
+4)	Autocorrelation
+
+5)	Homoscedasticity
+
+**Mathematical Equation:**  y =b0+b1x
+
+    where y = Dependent Variable,
+          x = Independent Variable,
+         b0 = Intercept of line (Point where Regression line touches Y-axis)
+         b1 = Regression Coefficient (Slope of Regression Line)
+         
+  
+  
+To perform Linear regression, LM function is being used on the relevant features which we got after performing Feature Selection methods.
+
+         
+```{r}
+#######################Linear regression##################################
+
+model_linear_regression <- lm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+summary(model_linear_regression)
+```
+
+
+
+```{r}
+# We are predicting the accuracy based on train and test data
+prediction_reg <- predict(model_linear_regression,newdata = train_df)
+# We are using R Sqaure and RMSE value to check the accuracy of the model
+mod_train <- data.frame(Dataset_used = 'Train',RMSE = RMSE(prediction_reg,train_df$price_usd),Rsquared = R2(prediction_reg,train_df$price_usd))
+```
+
+
+```{r}
+# Predicting the values based on Test data
+prediction_reg <- predict(model_linear_regression,newdata = test_df)
+mod_test <- data.frame(Dataset_used = 'test',RMSE = RMSE(prediction_reg,test_df$price_usd),Rsquared = R2(prediction_reg,test_df$price_usd))
+```
+
+
+```{r}
+final <- rbind(mod_train,mod_test)
+final
+```
+
+
+**Linear Regression:Results**
+
+
+
+R-Squared Value is 0.7514 which means this model can explain 75% of variation in price.
+Adjusted R Square value is 0.7507 is the R Square scaled by the number of parameters in the model.
+
+The value of F statistic will show whether the R Square is significant or not which means degrees of freedom.
+
+Here the p-value(2.2e-16) is less than 0.05 which mean that our model gives us a reliable estimate of price of the car.
+
+
+## LASSO Regression:
+
+**Why we are using Lasso regression?**
+
+The main advantage of a LASSO regression model is that it has the ability to set the coefficients for features it does not consider interesting to zero. This means that the model does some automatic feature selection to decide which features should and should not be included on its own.
+
+LASSO is short for Least Absolute Shrinkage and Selection Operator which is used for both regularization and model selection. This method is frequently used to choose a subset of variables. It outperforms other regression models in terms of prediction accuracy. Lasso Regularization also improves model interpretation.
+ 
+A tuning parameter, λ controls the strength of the L1 penalty. λ is basically the amount of shrinkage:
+
+•	When λ = 0, no parameters are eliminated. The estimate is equal to the one found with linear regression.
+
+•	As λ increases, more and more coefficients are set to zero and eliminated (theoretically, when λ = ∞, all coefficients are eliminated).
+
+•	As λ increases, bias increases.
+
+•	As λ decreases, variance increases.
+
+
+```{r echo=FALSE}
+#######################Lasso regression##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+
+```{r include=FALSE}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_lasso  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = new_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 1,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_lasso$bestTune
+```
+
+```{r}
+round(coef(model_lasso$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_lasso,newdata = train_df)
+mod_train <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+```
+
+
+```{r}
+prediction1 <- predict(model_lasso,newdata = test_df)
+mod_test <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared = R2(prediction1,test_df$price_usd))
+new_df_l<-rbind(mod_train,mod_test)
+print(new_df_l)
+```
+
+
+
+## Ridge Regression:
+
+**Why we are using Lasso regression?**
+
+We have chosen to perform ridge regression is because it protects the model from overfitting and it does not need unbiased estimators. There is only enough bias to make the estimates reasonably reliable approximations to the true population values.
+
+Ridge regression is a model tuning method that is used to analyze any data that suffers from multicollinearity. This method performs L2 regularization. When the issue of multicollinearity occurs, least-squares are unbiased, and variances are large, this results in predicted values being far away from the actual values.
+
+Min (||Y – X (theta) ||^2 + λ||theta||^2)
+
+Lambda is the penalty term. λ given here is denoted by an alpha parameter in the ridge function. So, by changing the values of alpha, we are controlling the penalty term. The higher the values of alpha, the bigger is the penalty and therefore the magnitude of coefficients is reduced. It shrinks the parameters. Therefore, it is used to prevent multicollinearity.
+
+```{r}
+####################### Ridge regression ##################################
+ctrls <- trainControl(method = 'cv',number = 10,savePredictions = 'all')
+```
+
+```{r}
+lambda_vect <- 10^seq(5,-5,length = 500)
+model_ridge  <- train(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    year_produced + manufacturer_name,data = new_df,
+    method = "glmnet",tuneGrid = expand.grid(alpha = 0,lambda = lambda_vect),trControl = ctrls)
+```
+
+```{r}
+model_ridge$bestTune
+```
+
+```{r}
+round(coef(model_ridge$finalModel,model_lasso$bestTune$lambda),3)
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = train_df)
+mod_trainr <- data.frame(dataset='train',RMSE = RMSE(prediction1,train_df$price_usd),Rsquared = R2(prediction1,train_df$price_usd))
+```
+
+```{r}
+prediction1 <- predict(model_ridge,newdata = test_df)
+mod_testr <- data.frame(dataset='test',RMSE = RMSE(prediction1,test_df$price_usd),Rsquared =R2(prediction1,test_df$price_usd))
+new_df1<-rbind(mod_trainr,mod_testr)
+print(new_df1)
+```
+
+
+**Results:**
+Using Lasso and Ridge regression we got to know that there is no improvement in the Linear regression model after adding L1 or L2 regularization term in it.
+
+## SVM Regressor
+
+**Why we are using SVM Regressor?**
+
+As the model is not only restricted to a linear model(as we have many kernel options), we have better performance in this model. At the same time SVR gives us flexibility to control the allowable errors – which is a big plus!
+Here we are using the best kernel type that gives us high accuracy
+
+**The Idea Behind Support Vector Regression**
+
+The problem of regression is to find a function that approximates mapping from an input domain to real numbers on the basis of a training sample. 
+
+Our main aim here is to decide a decision boundary at ‘a’ distance from the original hyperplane such that data points closest to the hyperplane or the support vectors are within that boundary line.
+
+Hence, we are going to take only those points that are within the decision boundary and have the least error rate, or are within the Margin of Tolerance. This gives us a better fitting model.
+
+The objective function of SVR is to minimize the coefficients and maximizing the margin.
+
+We can tune epsilon to gain the desired accuracy level of our model.
+
+**Our new objective function and constraints are as follows:**
+
+By default, the SVR model uses epsilon = 0.1 and cost=1.0 to build the model.
+
+If we don’t define any kernel in particular, the model automatically chooses best kernel on its own. But we have used a ‘Radial kernel’
+
+```{r}
+library(e1071)
+modelsvm <- svm(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + manufacturer_name,data = train_df)
+print(modelsvm)
+
+```
+
+```{r}
+predYsvm = predict(modelsvm, train_df)
+mod_train <- data.frame(RMSE = RMSE(predYsvm,train_df$price_usd),Rsquared = R2(predYsvm,train_df$price_usd))
+predYsvm = predict(modelsvm, test_df)
+mod_test <- data.frame(RMSE = RMSE(predYsvm,test_df$price_usd),Rsquared = R2(predYsvm,test_df$price_usd))
+```
+
+
+```{r}
+final_svm_results <- rbind(mod_train,mod_test)
+final_svm_results
+```
+
+
+
+
+## Random forest
+
+Random Forest is a Supervised learning algorithm that is based on the ensemble learning method and many Decision Trees.
+
+Random Forest is a Bagging technique, so all calculations are run in parallel and there is no interaction between the Decision Trees when building them.
+
+RF can be used to solve both Classification and Regression tasks.
+
+The name “Random Forest” comes from the Bagging idea of data randomization (Random) and building multiple Decision Trees (Forest).
+
+Overall, it is a powerful algorithm that limits the disadvantages of a Decision Tree model.
+
+
+**Why we are using Random forest?:**
+
+As it is using the bagging technique, we get model with low bias and low variance.
+
+It almost does not overfit due to subset and feature randomization.
+
+**Model**
+
+```{r}
+###RF model
+model_rf <- randomForest(price_usd~transmission + color + odometer_value + engine_type +
+    engine_capacity + body_type + drivetrain + state + number_of_photos +
+    feature_7 + feature_3 + feature_6 + feature_5 +
+    Production_year + average_brand_price,data = train_df,ntree=200, importance=TRUE,do.trace = TRUE)
+print(model_rf)
+```
+
+
+
+```{r}
+predYrf <- predict(model_rf, train_df)
+mod_train <- data.frame(RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+```
+
+
+```{r}
+predYrf <- predict(model_rf, test_df)
+mod_test <- data.frame(RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+```
+
+```{r}
+final_df <- rbind(mod_train,mod_test)
+final_df
+```
+
+
+
+**Random forest is giving very good accuracy and it is minimizing the error term with high margin.** 
+
+
+
+## XGBoost Regressor
+
+Boosting is an iterative process and it uses pseudo residual term we get from the base model. 
+
+For node splitting, we use similarity score and based on information gain, we use that feature for node splitting. We feed the error term to the next model and improve the accuracy.
+
+
+**Why we are using XGBoost Algorithm:**
+
+XGBoost is one of the best boosting algorithm which is fast compared to bagging techniques.
+
+The two main reasons to use XGBoost are execution speed and model performance.
+
+•	XGBoost dominates structured or tabular datasets on classification and regression predictive modeling problems. 
+
+•	The evidence is that it is the go-to algorithm for competition winners on the Kaggle competitive data science platform.
+
+**You can specify hyperparameter values to the class constructor to configure the model.Perhaps the most commonly configured hyperparameters are the following:**
+
+•	n_estimators: The number of trees in the ensemble, often increased until no further improvements are seen.
+
+•	max_depth: The maximum depth of each tree, often values are between 1 and 10.
+
+
+```{r}
+#xgboost model
+
+library(xgboost)
+
+train_x = data.matrix(train_df_new[, -16])
+train_y = train_df_new[,16]
+
+test_x = data.matrix(test_df_new[, -16])
+test_y = test_df_new[, 16]
+
+xgb_train = xgb.DMatrix(data = train_x, label = train_y)
+xgb_test = xgb.DMatrix(data = test_x, label = test_y)
+```
+
+
+**We performed hyperparameter tuning and As we got best max.depth = 4 and n rounds of 600, we are getting the max test rsquare score 0.9273930 which is very good model.**
+
+
+```{r}
+xgb_model_final <- xgboost(data = xgb_train, max.depth =4 , nrounds = 600)
+print(xgb_model_final)
+```
+
+
+```{r}
+predYrf <- predict(xgb_model_final, xgb_test)
+mod_test <- data.frame(dataset = 'Test',RMSE = RMSE(predYrf,test_df$price_usd),Rsquared = R2(predYrf,test_df$price_usd))
+predYrf <- predict(xgb_model_final, xgb_train)
+mod_train <- data.frame(dataset = 'Train',RMSE = RMSE(predYrf,train_df$price_usd),Rsquared = R2(predYrf,train_df$price_usd))
+Final_df <- rbind(mod_train,mod_test)
+Final_df
+```
+
+
+**Using XGBoost, we got r-squared around 92% and RMSE is significantly less compared to other models. XGBoost worked really well for this case study**
+

@@ -1,0 +1,580 @@
+---
+title: "Hypothesis_testing"
+author: "Team Dataverse(Yashwant, Manoj, Sai and Sravya)"
+date: "today"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+
+```{r results=T}
+#Loading libraries
+library(ezids)
+library(ggplot2)
+library(corrplot)
+library(tidyverse)
+```
+
+
+
+```{r results=T}
+car_data = data.frame(read.csv('cars.csv'))
+str(car_data)
+```
+
+## Data cleaning
+
+```{r results=T}
+car_data$transmission = as.factor(car_data$transmission)
+car_data$engine_fuel = as.factor(car_data$engine_fuel)
+car_data$engine_has_gas = as.factor(car_data$engine_has_gas)
+car_data$engine_type = as.factor(car_data$engine_type)
+car_data$body_type = as.factor(car_data$body_type)
+car_data$has_warranty = as.factor(car_data$has_warranty)
+car_data$state = as.factor(car_data$state)
+car_data$drivetrain = as.factor(car_data$drivetrain)
+car_data$is_exchangeable = as.factor(car_data$is_exchangeable)
+car_data$location_region = as.factor(car_data$location_region)
+```
+
+
+```{r results=T}
+feature_cols <- c(20:29)
+car_data[feature_cols] <- lapply(car_data[feature_cols],factor)
+str(car_data)
+```
+
+```{r results=T}
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- 0
+mean(car_data$engine_capacity)
+median(car_data$engine_capacity)
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+s <- getmode(car_data$engine_capacity)
+s
+```
+
+```{r results=T}
+car_data$engine_capacity[is.na(car_data$engine_capacity)] <- mean(car_data$engine_capacity,na.rm = TRUE)
+sapply(car_data, function(x) sum(is.na(x)))
+```
+
+## Unknown features(feature0 to feature9)
+
+In this dataset, we have 10 unknown features, and we are not aware that which part of the car these features are representing.
+So, to test the impact, we designed the t-test for all the features.
+
+H0: there is no difference in the mean price of the cars and the mean price based on unknown features.
+H1: there is a difference in the mean price of the cars and the mean price based on unknown features.
+
+### Feature 0
+
+Is feature_0 impacting the average car price?
+
+```{r results=T}
+with_feature_0<-subset(car_data,feature_0 == 'True')
+without_feature_0<-subset(car_data,feature_0 == 'False')
+```
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature0 = t.test(x=with_feature_0$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature0
+
+
+Hypothesis_test_price_without_feature0 = t.test(x=without_feature_0$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature0
+```
+
+We got low price interval if feature0 is in the car. So probably its outdated feature.
+
+### Feature 1
+
+Is feature_1 impacting the average car price?
+
+```{r results=T}
+with_feature_1<-subset(car_data,feature_1 == 'True')
+without_feature_1<-subset(car_data,feature_1 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature1 = t.test(x=with_feature_1$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature1
+
+
+Hypothesis_test_price_without_feature1 = t.test(x=without_feature_1$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature1
+```
+
+We got low price interval if feature0 is in the car.
+
+### Feature 2
+
+Is feature_2 impacting the average car price?
+
+```{r results=T}
+with_feature_2<-subset(car_data,feature_2 == 'True')
+without_feature_2<-subset(car_data,feature_2 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature2 = t.test(x=with_feature_2$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature2
+
+
+Hypothesis_test_price_without_feature2 = t.test(x=without_feature_2$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature2
+```
+
+### Feature_3
+
+```{r results=T}
+with_feature_3<-subset(car_data,feature_3 == 'True')
+without_feature_3<-subset(car_data,feature_3 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature3 = t.test(x=with_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature3
+
+
+Hypothesis_test_price_without_feature3 = t.test(x=without_feature_3$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature3
+```
+
+### Feature_4
+
+```{r results=T}
+with_feature_4<-subset(car_data,feature_4 == 'True')
+without_feature_4<-subset(car_data,feature_4 == 'False')
+```
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+
+Hypothesis_test_price_with_feature4 = t.test(x=with_feature_4$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature4
+
+
+Hypothesis_test_price_without_feature4 = t.test(x=without_feature_4$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature4
+```
+
+### Feature_5
+
+```{r results=T}
+with_feature_5<-subset(car_data,feature_5 == 'True')
+without_feature_5<-subset(car_data,feature_5 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+
+Hypothesis_test_price_with_feature5 = t.test(x=with_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature5
+
+
+Hypothesis_test_price_without_feature5 = t.test(x=without_feature_5$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature5
+```
+
+### Feature_6
+
+```{r results=T}
+with_feature_6<-subset(car_data,feature_6 == 'True')
+without_feature_6<-subset(car_data,feature_6 == 'False')
+```
+
+
+```{r results=T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_feature6 = t.test(x=with_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature6
+
+
+Hypothesis_test_price_without_feature6 = t.test(x=without_feature_6$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature6
+```
+
+### Feature_7
+
+```{r results=T}
+with_feature_7<-subset(car_data,feature_7 == 'True')
+without_feature_7<-subset(car_data,feature_7 == 'False')
+```
+
+
+```{r results=T}
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+Hypothesis_test_price_with_feature7 = t.test(x=with_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature7
+
+
+Hypothesis_test_price_without_feature7 = t.test(x=without_feature_7$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature7
+```
+
+### Feature_8
+
+```{r results=T}
+with_feature_8<-subset(car_data,feature_8 == 'True')
+without_feature_8<-subset(car_data,feature_8 == 'False')
+```
+
+```{r results=T}
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+Hypothesis_test_price_with_feature8 = t.test(x=with_feature_8$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature8
+
+
+Hypothesis_test_price_without_feature8 = t.test(x=without_feature_8$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature8
+```
+
+### Feature_9
+
+```{r results=T}
+with_feature_9<-subset(car_data,feature_9 == 'True')
+without_feature_9<-subset(car_data,feature_9 == 'False')
+```
+
+```{r results=T}
+mean_price = mean(car_data$price_usd) 
+mean_price
+
+Hypothesis_test_price_with_feature9 = t.test(x=with_feature_9$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_with_feature9
+
+
+Hypothesis_test_price_without_feature9 = t.test(x=without_feature_9$price_usd,mu = mean_price ,conf.level = 0.95)
+#default conf.level = 0.95
+Hypothesis_test_price_without_feature9
+```
+
+
+As we are getting the p-value significantly less and we can clearly see that the mean price is not falling in the price range we got based on the unknown feature category.
+
+
+
+
+## Anova test on car brands
+
+All car brands have same average car price or not?
+```{r results=T}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov
+```
+
+```{r results=T}
+xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
+```
+
+In this test, we are checking that is there any significant difference in the mean price on the basis of car manufacturer.
+H0: there is no difference in the mean prices of the cars based on manufacturer
+H1: there is a difference in the mean prices of the cars based on manufacturer
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+As we got p value less than α hence we reject the null hypothesis.
+It means there is a significant difference in the mean price based on manufacturer.
+
+## Warranty
+
+is there any impact of warranty of a car on the resale price?
+
+```{r results=T}
+with_warranty<-subset(car_data,has_warranty == 'True')
+without_warranty<-subset(car_data,has_warranty == 'False')
+```
+
+
+```{r results = T}
+
+mean_price = mean(car_data$price_usd)
+mean_price
+
+
+Hypothesis_test_price_with_warranty = t.test(x=with_warranty$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_with_warranty
+
+
+Hypothesis_test_price_without_warranty = t.test(x=without_warranty$price_usd,mu = mean_price ,conf.level = 0.95) 
+#default conf.level = 0.95
+Hypothesis_test_price_without_warranty
+```
+
+
+as we can see that mean price of the whole car dataset is not falling under the time interval we got after separating the data based on warranty feature.
+Also there is significant difference in the mean car price as we got price intervals which are not overlapping.
+
+## Chi square test of independence on Year of manufacture and price
+
+Car resale prices are dependent on the year of manufacture?
+
+```{r results=T}
+p_usd.intrv = cut(car_data$price_usd, c(0,10000,20000,30000,40000,50000))
+year.intrv = cut(car_data$year_produced, c(1940,1950,1960,1970,1980,1990,2000,2010,2020))
+lists <- list(price_intvl = as.character(p_usd.intrv),yr_interval = as.character(year.intrv))
+df <- as.data.frame(do.call(cbind, lists))
+conTable = table(df)
+print(conTable)
+```
+
+```{r results=T}
+head(df,3)
+```
+
+```{r results=T}
+chitest = chisq.test(conTable)
+chitest
+```
+
+With the chi square test of independence, we are checking that resale car prices are dependent on the year of manufacture or not.
+H0: Car prices and year of production are independent of each other.
+H1: Car prices and year of production are dependent of each other.
+
+If p≤α, reject H0; otherwise, do not reject H0.
+
+as we got p value less than 0.05 hance we are rejecting the null hypothesis.
+
+It means prices and year of production are dependent of each other
+
+
+## corrplot
+
+
+Correlation plot between the numerical features is considered
+
+```{r include=FALSE}
+car_data %>% select_if(is.numeric)->cars_numerical
+```
+
+```{r results=T}
+corrplot(cor(cars_numerical), method = 'number')
+```
+
+The above correlation plot shows the relation between all the numerical features and the price_usd.
+Here, odometer_value has negative correlation with price(cc=-0.42). Year of production is highly correlated among the others and the least correlated one is up_counter and duration_listed.
+
+ANOVA is helpful for testing three or more variables.It is similar to multiple two-sample t-tests.The one-way ANOVA is used to determine whether there are any statistically significant differences between the means of three or more independent (unrelated) groups.
+
+One way Anova test for color and body type is performed
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all color groups
+Null Hypothesis         H0 : all means are equal
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+## Anova test for car color
+
+```{r results=T}
+df_aov_1 = aov(price_usd ~  color , car_data)
+summary(df_aov_1)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of color is different from each other.
+
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of car body type
+Null Hypothesis         H0 : all means are equal
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+## Anova test for body type
+
+```{r results=T}
+df_aov_4 = aov(price_usd ~  body_type , car_data)
+summary(df_aov_4)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of body type is different from each other.
+
+## Testing engine_fuel type an engine_type
+
+In order to showcase the one-way ANOVA hypothesis test we examine the mean resale prices of cars, grouped by their engine fuel type. To make it clear, in this example the classification/grouping is done by one variable, the major variable, the so-called factor, thus we are conducting a one-way ANOVA. In this exercise we want to test if the mean annual resale price of cars is different for different engine fuel types.
+In the same way, one way anova test is performed on the engine type.
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine fuel types.
+Null Hypothesis         H0 : μ1=μ2=μ3=μ4=μ5=μ6
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+significance level is alpha=0.05
+
+```{r results=T}
+df_aov_2 = aov(price_usd~  engine_fuel , car_data)
+summary(df_aov_2)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine fuel type is different from each other.
+
+
+Setting the Hypothesis
+The null hypothesis states that the mean resale price in usd is equal among all groups of engine types.
+Null Hypothesis         H0 : μ1=μ2=μ3
+Alternate Hypothesis    H1 : not all means are equal
+
+Decide on the significance level
+Significance level is alpha=0.05
+
+```{r results=T}
+df_aov_3 = aov(price_usd~  engine_type , car_data)
+summary(df_aov_3)
+```
+
+If p≤α, reject H0; otherwise, do not reject H0.
+The p-value is less than the specified significance level of 0.05; we reject H0. The test results are statistically significant at the 5% level and provide very strong evidence against the null hypothesis.
+
+Conclusion from anova test:
+Again, we may conclude that at the 5% significance level, the data provides very strong evidence to conclude that at least one pair of group means of engine type is different from each other.
+
+## t-test for transmission type as there are only two sub groups
+
+```{r T test, echo=TRUE}
+summary(car_data$transmission)
+t_auto = subset(car_data, transmission == "automatic")
+t_mechanical = subset(car_data, transmission == "mechanical")
+t.test(x = t_auto$price_usd, y = t_mechanical$price_usd, conf.level = 0.99)
+```
+
+## Anova test on car brands
+
+All car brands have same average car price or not?
+```{r results=T}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data)
+price_aov
+```
+
+```{r results=T}
+xkabledply(price_aov, title = 'Anova test result impact of manufacturer_name on car price')
+```
+
+As we have 55 car brands, Running the test on all car brands to check if there is any significant difference in mean car price based on manufacturer.
+
+H0: there is no difference in the mean prices based on car brands.
+H1: there is a significant difference in the mean prices based on car brands.
+
+As we got p value less than 0.05, we will reject the null hypothesis.
+It means there is a significant difference based in the mean car prices based on manufacturer 
+
+
+## Anova test on top 10 car brands
+
+
+```{r results=T}
+car_data_top_10 <- car_data[car_data$manufacturer_name %in% c("Acura","Buick","Cadillac","Infiniti","Jaguar","Land Rover","Lexus","Mini","Porsche","Skoda"),]
+nrow(car_data_top_10)
+```
+
+```{r results=T}
+price_aov<-aov(price_usd ~ manufacturer_name, data=car_data_top_10)
+price_aov
+xkabledply(price_aov, title = 'Anova test result impact of top 10 manufacturer_name on car price')
+```
+
+## Anova test on Drivetrain
+
+Is there any change in the resale price based on drive train feature? 
+
+```{r results=T}
+cartrain_aov<-aov(price_usd ~ drivetrain, data=car_data)
+cartrain_aov
+```
+
+```{r results=T}
+xkabledply(cartrain_aov, title = 'Anova test result impact of drivetrain on car prices')
+```
+
